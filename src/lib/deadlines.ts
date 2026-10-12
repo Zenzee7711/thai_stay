@@ -26,6 +26,12 @@ export function nextReportDue(arrivalDate: string, slipDueDate: string) {
   return null;
 }
 
+// After filing, the next report is usually about 90 days on. Only a suggestion:
+// the user confirms the real date printed on their new receipt.
+export function suggestNextDue(dueDate: string): string {
+  return format(addDays(parseISO(dueDate), 90), "yyyy-MM-dd");
+}
+
 // How many calendar days from one date to another.
 // Negative if "to" is before "from".
 export function daysBetween(from: string, to: string): number {

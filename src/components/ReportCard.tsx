@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Card from "@/components/Card";
-import { daysBetween, type ReportStatus } from "@/lib/deadlines";
+import DateField from "@/components/DateField";
+import { daysBetween, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
 import { displayDate, relativeDays } from "@/lib/format";
 
 // One entry per status: the badge text, its colours, and what to do.
@@ -31,10 +33,27 @@ type ReportCardProps = {
   status: ReportStatus;
   source: "slip" | "estimate";
   dates: { opens: string; due: string; lastDay: string };
+  onFiled: (nextDue: string) => void;
 };
 
-export default function ReportCard({ today, status, source, dates }: ReportCardProps) {
+export default function ReportCard({ today, status, source, dates, onFiled }: ReportCardProps) {
   const style = statusStyles[status];
+  const suggestion = suggestNextDue(dates.due);
+
+  // Whether the "I've filed" box is open, and the date typed into it.
+  const [filing, setFiling] = useState(false);
+  const [nextDue, setNextDue] = useState("");
+
+  function startFiling() {
+    setNextDue(suggestion);
+    setFiling(true);
+  }
+
+  function saveFiling() {
+    if (!nextDue) return;
+    onFiled(nextDue);
+    setFiling(false);
+  }
   const steps = [
     { label: "Window opens", date: dates.opens },
     { label: "Report due", date: dates.due },
@@ -79,6 +98,45 @@ export default function ReportCard({ today, status, source, dates }: ReportCardP
           );
         })}
       </ol>
+
+      {status !== "not-open-yet" && !filing && (
+        <button
+          type="button"
+          onClick={startFiling}
+          className="mt-6 rounded-xl border border-line px-4 py-2.5 font-medium hover:border-accent hover:text-accent"
+        >
+          I&apos;ve filed this report
+        </button>
+      )}
+
+      {filing && (
+        <div className="mt-6 rounded-xl border border-line bg-background p-4">
+          <DateField
+            id="next-due"
+            label="Next due date, printed on your new receipt"
+            hint={`Usually about 90 days later, around ${displayDate(suggestion)}. Use the date on your receipt.`}
+            value={nextDue}
+            onChange={setNextDue}
+          />
+          <div className="mt-4 flex gap-3">
+            <button
+              type="button"
+              onClick={saveFiling}
+              disabled={!nextDue}
+              className="rounded-xl bg-accent px-4 py-2.5 font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-50"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiling(false)}
+              className="rounded-xl px-4 py-2.5 text-muted hover:text-foreground"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <p className="mt-6 border-t border-line pt-4 text-sm text-muted">
         {source === "slip"

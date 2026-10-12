@@ -6,6 +6,7 @@ import {
   reportStatus,
   reportWindow,
   stayLevel,
+  suggestNextDue,
 } from "./deadlines";
 
 describe("firstReportDue", () => {
@@ -96,5 +97,11 @@ describe("stayLevel", () => {
     [-1, "over"],
   ])("%i days left is %s", (daysLeft, expected) => {
     expect(stayLevel(daysLeft)).toBe(expected);
+  });
+});
+
+describe("suggestNextDue", () => {
+  it("suggests 90 days after the date just reported for", () => {
+    expect(suggestNextDue("2027-01-10")).toBe("2027-04-10");
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import CalendarCard from "@/components/CalendarCard";
 import Card from "@/components/Card";
@@ -9,7 +10,7 @@ import StayCard from "@/components/StayCard";
 import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
 import { useStoredProfile } from "@/hooks/useStoredProfile";
 import { deadlineEvents } from "@/lib/calendar";
-import type { Profile } from "@/lib/profile";
+import { afterReentry, type Profile } from "@/lib/profile";
 
 // Holds every input's state, works out the deadlines, and hands them to the cards.
 export default function StayForm() {
@@ -23,6 +24,9 @@ export default function StayForm() {
 
   const hasAnyDate = Boolean(arrivalDate || slipDueDate || permittedUntil);
 
+  // A short confirmation after one of the quick-update buttons is used.
+  const [notice, setNotice] = useState("");
+
   // The real "today", in the same YYYY-MM-DD text format as everything else.
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -32,6 +36,18 @@ export default function StayForm() {
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
   const calendarEvents = deadlineEvents(reportDates, permittedUntil);
+
+  function cameBackToday() {
+    save(afterReentry(profile, today));
+    setNotice(
+      "Your 90-day count restarted today. Check the new stamp in your passport and update \"Permitted to stay until\" if it changed.",
+    );
+  }
+
+  function filedReport(nextDue: string) {
+    update({ slipDueDate: nextDue });
+    setNotice("Saved. Your next report is now counted from the date on your receipt.");
+  }
 
   return (
     <div className="mt-8 space-y-6">
@@ -70,14 +86,32 @@ export default function StayForm() {
           I have a re-entry permit or a multiple-entry visa
         </label>
 
-        {hasAnyDate && (
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
           <button
             type="button"
-            onClick={clear}
-            className="mt-5 text-sm text-muted underline underline-offset-4 hover:text-foreground"
+            onClick={cameBackToday}
+            className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium hover:border-accent hover:text-accent"
           >
-            Clear my dates
+            I just came back to Thailand
           </button>
+          {hasAnyDate && (
+            <button
+              type="button"
+              onClick={() => {
+                clear();
+                setNotice("");
+              }}
+              className="text-sm text-muted underline underline-offset-4 hover:text-foreground"
+            >
+              Clear my dates
+            </button>
+          )}
+        </div>
+
+        {notice && (
+          <p role="status" className="mt-4 rounded-lg bg-background p-3 text-sm">
+            {notice}
+          </p>
         )}
       </Card>
 
@@ -88,7 +122,13 @@ export default function StayForm() {
       )}
 
       {due && reportDates && status && (
-        <ReportCard today={today} status={status} source={due.source} dates={reportDates} />
+        <ReportCard
+          today={today}
+          status={status}
+          source={due.source}
+          dates={reportDates}
+          onFiled={filedReport}
+        />
       )}
 
       {daysLeft !== null && (
