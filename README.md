@@ -17,10 +17,15 @@ plain summary, a timeline of your whole stay, calendar reminders, and a short gu
 
 - **Tells you what to do next, with the date.** For example: "Your next 90-day report is due
   12 Dec 2026. You can stay until 14 Aug 2027 (305 days left)."
-- **Timeline of your whole stay**, from your last arrival to your last permitted day. It has one
-  dot per 90-day report, and reports further ahead are drawn as estimates. It also shades the
-  filing window and grace period, shows the year at both ends and at each new year, and lets
-  you tap any dot to see its date.
+- **Timeline of your whole stay**, drawn like a transit line from your last arrival to your
+  last permitted day. Every stop is labelled ("Report 12 Dec", "Report ~12 Mar",
+  "Leave by 15 Aug"), and reports further ahead are marked as estimates. It also shows
+  "Day 30 of 336 · 3 reports to go", progress up to today, the filing window and grace period,
+  and a marker at each new year. Select a stop by tapping it, with Previous and Next, or with the
+  arrow keys. On narrow screens, labels that would overlap move to a second row.
+- **Explains the travel rule where it matters.** A trip abroad restarts the 90-day count, so
+  the date field, the report card, the timeline and the guide all say so, and an old receipt
+  from before a trip is detected and explained.
 - **90-day report status:** upcoming, file now, overdue (no fine yet) or late, each with a
   single instruction such as "You can file from 27 Nov 2026."
 - **Permitted-stay countdown** that turns amber under 30 days and red at 7, plus a warning if

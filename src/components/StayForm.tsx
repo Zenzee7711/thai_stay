@@ -94,27 +94,25 @@ export default function StayForm() {
           <DateField
             id="arrival"
             label="Last arrival"
+            hint="The date on your latest entry stamp."
             value={arrivalDate}
             onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
             label="Allowed to stay until"
+            hint="The end date on that same stamp."
             value={permittedUntil}
             onChange={(value) => update({ permittedUntil: value })}
           />
           <DateField
             id="slip"
             label="Next report due"
+            hint="From your last TM.47 receipt. Leave blank before your first report, or if you've been abroad since. A trip abroad restarts the 90-day count."
             value={slipDueDate}
             onChange={(value) => update({ slipDueDate: value })}
           />
         </div>
-        <p className="mt-3 text-sm text-muted">
-          The first two dates are on the latest entry stamp in your passport. The next report date
-          is on your last TM.47 receipt. Leave it blank before your first report, or if you have
-          travelled abroad since.
-        </p>
 
         {outdatedSlip && (
           <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-amber-400/10 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -175,6 +173,7 @@ export default function StayForm() {
         {due && reportDates && status && (
           <ReportCard
             today={today}
+            arrivalDate={arrivalDate}
             status={status}
             source={due.source}
             dates={reportDates}

@@ -37,13 +37,21 @@ const statusStyles: Record<
 
 type ReportCardProps = {
   today: string;
+  arrivalDate: string;
   status: ReportStatus;
   source: "slip" | "estimate";
   dates: ReportDates;
   onFiled: (nextDue: string) => void;
 };
 
-export default function ReportCard({ today, status, source, dates, onFiled }: ReportCardProps) {
+export default function ReportCard({
+  today,
+  arrivalDate,
+  status,
+  source,
+  dates,
+  onFiled,
+}: ReportCardProps) {
   const style = statusStyles[status];
   const suggestion = suggestNextDue(dates.due);
   const rows = [
@@ -96,8 +104,8 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
 
       <p className="mt-3 text-sm text-muted">
         {source === "slip"
-          ? "Dates based on the due date from your receipt."
-          : "Estimated from your arrival date. After you file, use the date on your receipt."}
+          ? "Based on the due date on your receipt. A trip abroad would restart the count."
+          : `Counted from your last arrival on ${shortDate(arrivalDate)}. A trip abroad restarts this count. After you file, use the date on your new receipt.`}
       </p>
 
       {status !== "not-open-yet" && !filing && (

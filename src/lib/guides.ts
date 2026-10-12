@@ -18,6 +18,14 @@ export const reportGuide: Guide = {
       ],
     },
     {
+      heading: "If you travel abroad",
+      items: [
+        "Leaving Thailand ends your current 90-day count. Your arrival day back in Thailand is day 1 again.",
+        "The due date on your old receipt no longer applies. Your next report is due 90 days after you arrive.",
+        "After a trip, tap \"I just re-entered Thailand\", or change \"Last arrival\" and clear \"Next report due\".",
+      ],
+    },
+    {
       heading: "What to bring (in person)",
       items: [
         "Your passport",
