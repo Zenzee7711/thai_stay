@@ -61,6 +61,11 @@ The commit history follows these stages.
 - **Your paperwork beats my estimate.** After each report, Immigration prints the next due date
   on your TM.47 receipt. When you enter it, the app uses that date and labels anything it
   calculated itself as an estimate.
+- **A trip abroad cancels an old receipt.** Leaving Thailand restarts the 90-day count. A
+  receipt is only issued after a first report, so during the current stay its date is always
+  later than the first report due from your arrival. If it isn't, the receipt is from before
+  your trip. The app then counts from your arrival instead and explains why. (I found this
+  case with my own dates: a receipt due 16 Sep, but a trip from 1 to 14 Sep.)
 - **Only the next report is treated as certain.** Later reports depend on when you file and
   whether you travel, so they appear on the timeline as estimates and are left out of the
   calendar export.

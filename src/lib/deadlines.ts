@@ -20,9 +20,21 @@ export function reportWindow(dueDate: string) {
 
 // After each report, Immigration prints the next due date on the TM.47 slip.
 // That printed date beats our estimate, so we only estimate when there is no slip.
-export function nextReportDue(arrivalDate: string, slipDueDate: string) {
-  if (slipDueDate) return { date: slipDueDate, source: "slip" as const };
-  if (arrivalDate) return { date: firstReportDue(arrivalDate), source: "estimate" as const };
+//
+// Leaving Thailand restarts the count, so a receipt from before the last arrival no longer
+// applies. A receipt is only issued after a first report, so during the current stay its date
+// is always later than the first report due from the arrival. If it isn't, it is out of date.
+export type NextReport =
+  | { date: string; source: "slip" }
+  | { date: string; source: "estimate"; outdatedSlip?: string };
+
+export function nextReportDue(arrivalDate: string, slipDueDate: string): NextReport | null {
+  const fromArrival = arrivalDate ? firstReportDue(arrivalDate) : null;
+  if (slipDueDate && fromArrival && slipDueDate <= fromArrival) {
+    return { date: fromArrival, source: "estimate", outdatedSlip: slipDueDate };
+  }
+  if (slipDueDate) return { date: slipDueDate, source: "slip" };
+  if (fromArrival) return { date: fromArrival, source: "estimate" };
   return null;
 }
 

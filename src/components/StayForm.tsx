@@ -37,6 +37,8 @@ export default function StayForm() {
 
   const due = nextReportDue(arrivalDate, slipDueDate);
   const reportDates = due ? reportWindow(due.date) : null;
+  // A receipt date from before the last trip abroad, which the count no longer uses.
+  const outdatedSlip = due?.source === "estimate" ? due.outdatedSlip : undefined;
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
@@ -113,6 +115,25 @@ export default function StayForm() {
           is on your last TM.47 receipt. Leave it blank before your first report, or if you have
           travelled abroad since.
         </p>
+
+        {outdatedSlip && (
+          <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-amber-400/10 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              <span className="font-medium">Your receipt date ({shortDate(outdatedSlip)}) no longer applies.</span>{" "}
+              <span className="text-muted">
+                It is from before your last arrival, and leaving Thailand restarts the 90-day count.
+                Your next report is counted from {shortDate(arrivalDate)} instead.
+              </span>
+            </p>
+            <button
+              type="button"
+              onClick={() => update({ slipDueDate: "" })}
+              className="shrink-0 self-start rounded-full border border-line px-4 py-1.5 transition hover:border-foreground/30 sm:self-auto"
+            >
+              Remove old date
+            </button>
+          </div>
+        )}
 
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
           <Switch

@@ -86,6 +86,19 @@ describe("nextReportDue", () => {
     });
   });
 
+  it("ignores a receipt from before the last arrival, because leaving resets the count", () => {
+    // Receipt said 16 Sep, but the person left on 1 Sep and came back on 14 Sep.
+    expect(nextReportDue("2026-09-14", "2026-09-16")).toEqual({
+      date: "2026-12-12",
+      source: "estimate",
+      outdatedSlip: "2026-09-16",
+    });
+  });
+
+  it("keeps a receipt issued during the current stay", () => {
+    expect(nextReportDue("2026-01-01", "2026-06-29")).toEqual({ date: "2026-06-29", source: "slip" });
+  });
+
   it("returns nothing when neither date is known", () => {
     expect(nextReportDue("", "")).toBeNull();
   });
