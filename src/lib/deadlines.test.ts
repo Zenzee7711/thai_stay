@@ -13,6 +13,10 @@ describe("firstReportDue", () => {
   it("is day 90, counting the arrival day as day 1", () => {
     expect(firstReportDue("2026-10-13")).toBe("2027-01-10");
   });
+
+  it("handles a leap-day arrival", () => {
+    expect(firstReportDue("2028-02-29")).toBe("2028-05-28");
+  });
 });
 
 describe("reportWindow", () => {
