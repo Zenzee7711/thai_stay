@@ -18,6 +18,14 @@ export function reportWindow(dueDate: string) {
   };
 }
 
+// After each report, Immigration prints the next due date on the TM.47 slip.
+// That printed date beats our estimate, so we only estimate when there is no slip.
+export function nextReportDue(arrivalDate: string, slipDueDate: string) {
+  if (slipDueDate) return { date: slipDueDate, source: "slip" as const };
+  if (arrivalDate) return { date: firstReportDue(arrivalDate), source: "estimate" as const };
+  return null;
+}
+
 // How many calendar days from one date to another.
 // Negative if "to" is before "from".
 export function daysBetween(from: string, to: string): number {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import {
   daysBetween,
-  firstReportDue,
+  nextReportDue,
   reportStatus,
   reportWindow,
   type ReportStatus,
@@ -19,13 +19,15 @@ const statusMessages: Record<ReportStatus, string> = {
 
 export default function StayForm() {
   const [arrivalDate, setArrivalDate] = useState("");
+  const [slipDueDate, setSlipDueDate] = useState("");
   const [permittedUntil, setPermittedUntil] = useState("");
+  const [hasReentryPermit, setHasReentryPermit] = useState(false);
 
   // The real "today", in the same YYYY-MM-DD text format as everything else.
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const dueDate = arrivalDate ? firstReportDue(arrivalDate) : null;
-  const reportDates = dueDate ? reportWindow(dueDate) : null;
+  const due = nextReportDue(arrivalDate, slipDueDate);
+  const reportDates = due ? reportWindow(due.date) : null;
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
@@ -42,12 +44,30 @@ export default function StayForm() {
         className="mt-2 rounded border px-3 py-2"
       />
 
-      {reportDates && status && (
+      <label htmlFor="slip" className="mt-6 block font-medium">
+        Next report due, from your last TM.47 slip (optional)
+      </label>
+      <p className="text-sm">
+        Leave empty if this is your first report, or if you have left Thailand since your last
+        report. Leaving resets the 90-day count.
+      </p>
+      <input
+        id="slip"
+        type="date"
+        value={slipDueDate}
+        onChange={(event) => setSlipDueDate(event.target.value)}
+        className="mt-2 rounded border px-3 py-2"
+      />
+
+      {due && reportDates && status && (
         <div className="mt-6">
           <p className="font-medium">{statusMessages[status]}</p>
           <ul className="mt-2 space-y-1">
             <li>Window opens: {reportDates.opens}</li>
-            <li>Report due: {reportDates.due}</li>
+            <li>
+              Report due: {reportDates.due}{" "}
+              {due.source === "slip" ? "(from your slip)" : "(estimated from your arrival date)"}
+            </li>
             <li>Last day before a fine: {reportDates.lastDay}</li>
           </ul>
         </div>
@@ -69,6 +89,22 @@ export default function StayForm() {
           {daysLeft >= 0
             ? `Your permission to stay ends in ${daysLeft} days.`
             : `You have overstayed by ${-daysLeft} days. Contact immigration now.`}
+        </p>
+      )}
+
+      <label className="mt-8 flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={hasReentryPermit}
+          onChange={(event) => setHasReentryPermit(event.target.checked)}
+        />
+        I have a re-entry permit or a multiple-entry visa
+      </label>
+
+      {permittedUntil && !hasReentryPermit && (
+        <p className="mt-2">
+          If you leave Thailand without a re-entry permit, your current permission to stay ends.
+          Get one before you travel.
         </p>
       )}
     </section>

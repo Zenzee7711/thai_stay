@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { daysBetween, firstReportDue, reportStatus, reportWindow } from "./deadlines";
+import {
+  daysBetween,
+  firstReportDue,
+  nextReportDue,
+  reportStatus,
+  reportWindow,
+} from "./deadlines";
 
 describe("firstReportDue", () => {
   it("is day 90, counting the arrival day as day 1", () => {
@@ -56,5 +62,25 @@ describe("reportStatus", () => {
 
   it("is late the day after the last day", () => {
     expect(reportStatus("2027-01-18", dates)).toBe("late");
+  });
+});
+
+describe("nextReportDue", () => {
+  it("uses the date printed on the TM.47 slip when there is one", () => {
+    expect(nextReportDue("2026-10-13", "2027-03-01")).toEqual({
+      date: "2027-03-01",
+      source: "slip",
+    });
+  });
+
+  it("estimates from the arrival date when there is no slip", () => {
+    expect(nextReportDue("2026-10-13", "")).toEqual({
+      date: "2027-01-10",
+      source: "estimate",
+    });
+  });
+
+  it("returns nothing when neither date is known", () => {
+    expect(nextReportDue("", "")).toBeNull();
   });
 });
