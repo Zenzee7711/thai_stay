@@ -18,6 +18,12 @@ export function dayMonth(date: string): string {
   return format(parseISO(date), "d MMM");
 }
 
+// Short when the date is in the current year ("27 Nov"), with the year otherwise
+// ("14 Aug 2025"), so two "14 Aug"s two years apart can't be confused.
+export function stopDate(date: string, today: string): string {
+  return date.slice(0, 4) === today.slice(0, 4) ? dayMonth(date) : shortDate(date);
+}
+
 // A day count from daysBetween() -> words people actually say.
 export function relativeDays(days: number): string {
   if (days === 0) return "today";

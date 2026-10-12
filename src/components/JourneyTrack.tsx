@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { daysBetween } from "@/lib/deadlines";
-import { dayMonth, displayDate, relativeDays } from "@/lib/format";
+import { displayDate, relativeDays, stopDate } from "@/lib/format";
 import { trackPosition, trackRange, yearStarts, type Milestone } from "@/lib/journey";
 
 type JourneyTrackProps = {
@@ -16,7 +16,9 @@ function stopName(milestone: Milestone): string {
 }
 
 // Roughly how wide a stop's label is, in pixels, including a small gap.
+// Labels with a year ("14 Aug 2025") are wider.
 const labelWidth = 62;
+const labelWidthWithYear = 80;
 
 // Labels at the ends line up with the edge of the track so they stay inside the card.
 function edge(position: number): "start" | "end" | "middle" {
@@ -53,9 +55,10 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
   const rows = milestones.map((m) => {
     const x = (at(m.date) / 100) * trackWidth;
     const side = edge(at(m.date));
-    const left = side === "start" ? x : side === "end" ? x - labelWidth : x - labelWidth / 2;
+    const width = m.date.slice(0, 4) === today.slice(0, 4) ? labelWidth : labelWidthWithYear;
+    const left = side === "start" ? x : side === "end" ? x - width : x - width / 2;
     const row = left >= rowEnds[0] ? 0 : 1;
-    rowEnds[row] = left + labelWidth;
+    rowEnds[row] = left + width;
     return row;
   });
 
@@ -169,7 +172,7 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
                 <span className="font-medium">{stopName(milestone)}</span>
                 <span className="tabular-nums">
                   {milestone.estimated ? "~" : ""}
-                  {dayMonth(milestone.date)}
+                  {stopDate(milestone.date, today)}
                 </span>
               </span>
             </button>
