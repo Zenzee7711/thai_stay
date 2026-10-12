@@ -19,20 +19,20 @@ export function deadlineEvents(
     events.push(
       {
         date: report.opens,
-        title: "90-day report: you can file from today",
-        details: `Your 90-day report (TM.47) can be filed from today. ${footer}`,
+        title: "90-day report: earliest day",
+        details: `You can do your 90-day report from today. ${footer}`,
         remindDaysBefore: [],
       },
       {
         date: report.due,
         title: "90-day report due",
-        details: `Your 90-day report (TM.47) is due today. ${footer}`,
+        details: `Your 90-day report is due today. ${footer}`,
         remindDaysBefore: [3],
       },
       {
         date: report.lastDay,
-        title: "90-day report: last day without a fine",
-        details: `File today at the latest. After today the usual fine is 2000 THB. ${footer}`,
+        title: "90-day report: last day, no fine",
+        details: `Last day to do your 90-day report without a 2000 THB fine. ${footer}`,
         remindDaysBefore: [2],
       },
     );
@@ -40,8 +40,8 @@ export function deadlineEvents(
   if (permittedUntil) {
     events.push({
       date: permittedUntil,
-      title: "Last day of your permitted stay in Thailand",
-      details: `Leave Thailand or get an extension by today. Overstaying costs 500 THB a day. ${footer}`,
+      title: "Visa expires",
+      details: `Extend your visa or leave Thailand by today. After this it costs 500 THB a day. ${footer}`,
       remindDaysBefore: [30, 7],
     });
   }

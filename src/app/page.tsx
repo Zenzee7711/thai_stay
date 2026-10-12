@@ -2,7 +2,7 @@ import StayForm from "@/components/StayForm";
 
 const sources = [
   { label: "Immigration Bureau", href: "https://www.immigration.go.th/" },
-  { label: "Online TM.47 report", href: "https://tm47.immigration.go.th/tm47/" },
+  { label: "Online 90-day report", href: "https://tm47.immigration.go.th/tm47/" },
   { label: "Thai government portal", href: "https://thailand.go.th/event-detail/001_01_084" },
   { label: "Thaiger guide", href: "https://thethaiger.com/visas/services/90-day-reporting/" },
 ];
@@ -20,8 +20,8 @@ export default function Home() {
 
       <footer className="mt-20 space-y-3 border-t border-line pt-6 text-sm text-muted">
         <p>
-          Your dates are saved in this browser only and are never sent anywhere. This is not legal
-          advice. Rules and fees can change, so check with Immigration before you act.
+          Your dates stay on this device. Not legal advice: rules change, so check with
+          Immigration.
         </p>
         <p className="flex flex-wrap gap-x-4 gap-y-1">
           {sources.map((source) => (

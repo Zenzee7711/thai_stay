@@ -41,9 +41,15 @@ latest receipt and answers these questions for you.
 - **Handles trips abroad.** A trip restarts the 90-day count. The date field, the report card,
   the timeline and the guide all explain this, and a receipt from before a trip is detected
   automatically, ignored and explained, with a button to remove it.
+- **Warns about weekends and public holidays.** Immigration offices are closed then. If your
+  in-person deadline falls on one, the app tells you the last day they are open. For example:
+  "12 Dec 2026 is a Saturday. Offices are closed, so go by Fri 11 Dec 2026." It covers Thai
+  public holidays from October 2026 to December 2027. Lunar holiday dates for 2027 are provisional
+  until the government announces them.
 - **Finds your immigration office.** "Find the nearest office" uses your phone's location to
   list the closest immigration offices with Google Maps directions, or you can pick your area
-  from a list. Your location never leaves your device.
+  from a list, with the usual opening hours and a "closed today" notice. Your location never
+  leaves your device.
 - **Timeline of your whole stay**, drawn like a transit line from your last arrival to your
   visa expiry. Every stop is labelled ("Report 12 Dec", "Report ~12 Mar", "Leave by 15 Aug"),
   and reports further ahead are marked as estimates. It shows "Day 30 of 336 · 3 reports to go",
@@ -88,7 +94,8 @@ Remembering them, and knowing which rule applies, is. So I reworked it in stages
    The timeline had no years and showed only the first report. My old receipt from before a trip
    to Indonesia made the app say I was late when I wasn't. The wording was too vague. I fixed
    each one, and added the in person or online answer and the office finder, because those
-   confused me too when I was new.
+   confused me too when I was new. Then I cut the text down so every message is one short line
+   in plain words, for students who have never dealt with immigration before.
 
 The commit history follows these stages.
 
@@ -139,6 +146,7 @@ src/
     ├── headline.ts     the summary sentences
     ├── journey.ts      timeline: milestones, estimated later reports, positions, year markers
     ├── offices.ts      immigration offices, distances, nearest office, directions links
+    ├── holidays.ts     weekends and public holidays when offices are closed
     ├── calendar.ts     calendar events and Google Calendar links
     ├── ics.ts          .ics file builder with reminders
     ├── profile.ts      validating saved data

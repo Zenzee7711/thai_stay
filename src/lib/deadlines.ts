@@ -74,18 +74,18 @@ export function filingMethod(source: "slip" | "estimate", status: ReportStatus):
   if (source === "estimate") {
     return {
       method: "in-person",
-      reason: "This is your first report since you arrived, so it must be done in person.",
+      reason: "It's your first report since you arrived.",
     };
   }
   if (status === "grace" || status === "late") {
     return {
       method: "in-person",
-      reason: "Online filing closes on the due date. After that, report in person.",
+      reason: "Online closes on the due date.",
     };
   }
   return {
     method: "online-or-in-person",
-    reason: "You have already reported since arriving, so you can file online or in person.",
+    reason: "You've already reported since you arrived.",
   };
 }
 

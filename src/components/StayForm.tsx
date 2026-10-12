@@ -54,14 +54,12 @@ export default function StayForm() {
 
   function cameBackToday() {
     save(afterReentry(profile, today));
-    setNotice(
-      "Done. Your 90-day count now starts today. If you got a new stamp, update \"Allowed to stay until\".",
-    );
+    setNotice("Done. Your 90-day count restarts today. Got a new visa date? Update it above.");
   }
 
   function filedReport(nextDue: string) {
     update({ slipDueDate: nextDue });
-    setNotice(`Saved. Your next report is due ${shortDate(nextDue)}.`);
+    setNotice(`Saved. Next report due ${shortDate(nextDue)}.`);
   }
 
   return (
@@ -78,11 +76,21 @@ export default function StayForm() {
           ))
         ) : (
           <>
-            Track your 90-day report and visa dates in Thailand.{" "}
-            <span className="text-muted">Start by adding your dates below.</span>
+            Know when your 90-day report and visa are due.{" "}
+            <span className="text-muted">Add your dates below.</span>
           </>
         )}
       </h1>
+
+      <details className="group mt-5 max-w-xl text-sm">
+        <summary className="cursor-pointer list-none text-muted underline decoration-line underline-offset-4 hover:text-foreground">
+          What is a 90-day report?
+        </summary>
+        <p className="mt-2 text-muted">
+          If you stay in Thailand for more than 90 days in a row, you must tell Immigration your
+          address every 90 days. It&apos;s free. Being late usually costs a 2,000 THB fine.
+        </p>
+      </details>
 
       {milestones.length > 0 && (
         <div className="mt-12">
@@ -98,21 +106,21 @@ export default function StayForm() {
           <DateField
             id="arrival"
             label="Last arrival in Thailand"
-            hint="The date on your latest entry stamp."
+            hint="Your latest entry stamp."
             value={arrivalDate}
             onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
-            label="Visa expires (allowed to stay until)"
-            hint="The &quot;admitted until&quot; date on your latest entry or extension stamp. If your visa sticker shows another date, the stamp date is the one that counts."
+            label="Visa expires"
+            hint="The &quot;until&quot; date on your latest stamp, not the visa sticker."
             value={permittedUntil}
             onChange={(value) => update({ permittedUntil: value })}
           />
           <DateField
             id="slip"
-            label="Next report due (from your last 90-day report receipt)"
-            hint="Leave blank before your first report, or if you've been abroad since. A trip abroad restarts the 90-day count."
+            label="Next report due (from your last receipt)"
+            hint="Leave blank if it's your first report, or you traveled abroad since."
             value={slipDueDate}
             onChange={(value) => update({ slipDueDate: value })}
           />
@@ -121,10 +129,9 @@ export default function StayForm() {
         {outdatedSlip && (
           <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-amber-400/10 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p>
-              <span className="font-medium">Your receipt date ({shortDate(outdatedSlip)}) no longer applies.</span>{" "}
+              <span className="font-medium">Old receipt ignored.</span>{" "}
               <span className="text-muted">
-                It is from before your last arrival, and leaving Thailand restarts the 90-day count.
-                Your next report is counted from {shortDate(arrivalDate)} instead.
+                You traveled after it, so your count restarted on {shortDate(arrivalDate)}.
               </span>
             </p>
             <button
@@ -132,7 +139,7 @@ export default function StayForm() {
               onClick={() => update({ slipDueDate: "" })}
               className="shrink-0 self-start rounded-full border border-line px-4 py-1.5 transition hover:border-foreground/30 sm:self-auto"
             >
-              Remove old date
+              Remove it
             </button>
           </div>
         )}
@@ -148,7 +155,7 @@ export default function StayForm() {
             onClick={cameBackToday}
             className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-foreground/30"
           >
-            I just re-entered Thailand
+            I just came back to Thailand
           </button>
           {hasAnyDate && (
             <button
@@ -177,7 +184,6 @@ export default function StayForm() {
         {due && reportDates && status && (
           <ReportCard
             today={today}
-            arrivalDate={arrivalDate}
             status={status}
             source={due.source}
             dates={reportDates}

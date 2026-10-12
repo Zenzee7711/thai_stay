@@ -9,10 +9,9 @@ export default function HomeScreenHint() {
   return (
     <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-card p-4 text-sm motion-safe:animate-rise sm:flex-row sm:items-center sm:justify-between">
       <p>
-        <span className="font-medium">Keep your dates on iPhone.</span>{" "}
+        <span className="font-medium">On iPhone?</span>{" "}
         <span className="text-muted">
-          Safari may delete them if you don&apos;t open this page for 7 days. Tap Share, then Add to
-          Home Screen.
+          Tap Share, then Add to Home Screen, so Safari doesn&apos;t delete your dates.
         </span>
       </p>
       <button

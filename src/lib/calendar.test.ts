@@ -7,10 +7,10 @@ describe("deadlineEvents", () => {
   it("makes three report events and one stay event when everything is known", () => {
     const titles = deadlineEvents(report, "2027-04-23").map((event) => event.title);
     expect(titles).toEqual([
-      "90-day report: you can file from today",
+      "90-day report: earliest day",
       "90-day report due",
-      "90-day report: last day without a fine",
-      "Last day of your permitted stay in Thailand",
+      "90-day report: last day, no fine",
+      "Visa expires",
     ]);
   });
 

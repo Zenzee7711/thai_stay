@@ -12,10 +12,10 @@ export default function InAppBrowserHint() {
   return (
     <div className="mt-8 rounded-2xl border border-amber-400/40 bg-amber-400/10 p-4 text-sm">
       <p>
-        <span className="font-medium">You&apos;re viewing this inside {app}.</span>{" "}
+        <span className="font-medium">Open this in Safari or Chrome.</span>{" "}
         <span className="text-muted">
-          Dates saved here can be lost. Open this page in Safari or Chrome to keep them
-          {app === "LINE" ? "." : ": tap the ••• menu, then Open in browser."}
+          Dates saved inside {app} can be lost
+          {app === "LINE" ? "." : ". Tap ••• then Open in browser."}
         </span>
       </p>
       {app === "LINE" && (

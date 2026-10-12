@@ -3,65 +3,62 @@ import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import GuideDetails from "@/components/GuideDetails";
 import { daysBetween, filingMethod, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
-import { relativeDays, shortDate } from "@/lib/format";
+import { displayDate, relativeDays, shortDate } from "@/lib/format";
 import { reportGuide } from "@/lib/guides";
+import { closedPhrase, lastOpenDayBy, officeClosedReason } from "@/lib/holidays";
 
 type ReportDates = { opens: string; due: string; lastDay: string };
 
-// Per status: a short badge, its colours, and one clear instruction with the date that matters.
+// Per status: a short badge, its colours, and one line saying what to do.
 const statusStyles: Record<
   ReportStatus,
   { badge: string; colors: string; advice: (dates: ReportDates) => string }
 > = {
   "not-open-yet": {
-    badge: "Upcoming",
+    badge: "Not yet",
     colors: "bg-line/60 text-muted",
-    advice: (dates) => `You can file from ${shortDate(dates.opens)}.`,
+    advice: (dates) => `You can do it from ${shortDate(dates.opens)}.`,
   },
   open: {
-    badge: "File now",
+    badge: "Do it now",
     colors: "bg-accent/12 text-accent",
-    advice: () => "You can file now, online or at your immigration office.",
+    advice: () => "You can do it now.",
   },
   grace: {
     badge: "Overdue",
     colors: "bg-amber-400/15 text-amber-700 dark:text-amber-300",
-    advice: (dates) => `File by ${shortDate(dates.lastDay)} to avoid a 2,000 THB fine.`,
+    advice: (dates) => `Do it by ${shortDate(dates.lastDay)} to avoid a fine.`,
   },
   late: {
     badge: "Late",
     colors: "bg-red-500/12 text-red-700 dark:text-red-300",
-    advice: () => "The grace period has ended. You may be fined 2,000 THB when you file.",
+    advice: () => "You will likely pay a 2,000 THB fine.",
   },
 };
 
 type ReportCardProps = {
   today: string;
-  arrivalDate: string;
   status: ReportStatus;
   source: "slip" | "estimate";
   dates: ReportDates;
   onFiled: (nextDue: string) => void;
 };
 
-export default function ReportCard({
-  today,
-  arrivalDate,
-  status,
-  source,
-  dates,
-  onFiled,
-}: ReportCardProps) {
+export default function ReportCard({ today, status, source, dates, onFiled }: ReportCardProps) {
   const style = statusStyles[status];
   const howToFile = filingMethod(source, status);
   const suggestion = suggestNextDue(dates.due);
+
+  // Going in person? If the deadline that matters falls on a weekend or holiday, say when to go.
+  const deadline = status === "grace" ? dates.lastDay : dates.due;
+  const closedReason = howToFile.method === "in-person" ? officeClosedReason(deadline) : null;
   const rows = [
-    { label: "Can file from", date: dates.opens },
-    { label: "Due date", date: dates.due },
-    { label: "Last day without a fine", date: dates.lastDay },
+    { label: "Earliest day", date: dates.opens },
+    { label: "Due", date: dates.due },
+    { label: "Last day, no fine", date: dates.lastDay },
   ];
 
-  // Whether the "mark as filed" box is open, and the date typed into it.
+  // Whether the "I did my report" box is open, and the date typed into it.
   const [filing, setFiling] = useState(false);
   const [nextDue, setNextDue] = useState("");
 
@@ -77,7 +74,7 @@ export default function ReportCard({
   }
 
   return (
-    <Card title="90-day report (TM.47)">
+    <Card title="90-day report">
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <p className="font-serif text-4xl sm:text-5xl">
           Due {relativeDays(daysBetween(today, dates.due))}
@@ -86,28 +83,33 @@ export default function ReportCard({
           {style.badge}
         </span>
       </div>
-      <p className="mt-2 text-muted">{style.advice(dates)}</p>
+      <p className="mt-2 text-muted">
+        {style.advice(dates)}{" "}
+        <span className="text-foreground">
+          {howToFile.method === "in-person" ? "Go in person." : "Online is OK."}
+        </span>{" "}
+        {howToFile.reason}{" "}
+        {howToFile.method === "online-or-in-person" && (
+          <a
+            href="https://tm47.immigration.go.th/tm47/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline underline-offset-2"
+          >
+            Report online
+          </a>
+        )}
+      </p>
 
-      <div className="mt-5 rounded-2xl bg-background p-4 text-sm">
-        <p className="font-medium">
-          {howToFile.method === "in-person" ? "File in person" : "File online or in person"}
+      {closedReason && status !== "late" && (
+        <p className="mt-4 flex gap-3 rounded-2xl bg-amber-400/10 p-4 text-sm">
+          <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+          <span>
+            {shortDate(deadline)} {closedPhrase(closedReason)}. Offices are closed, so go by{" "}
+            <span className="font-medium">{displayDate(lastOpenDayBy(deadline))}</span>.
+          </span>
         </p>
-        <p className="mt-1 text-muted">
-          {howToFile.reason}{" "}
-          {howToFile.method === "in-person" ? (
-            "Find your immigration office below."
-          ) : (
-            <a
-              href="https://tm47.immigration.go.th/tm47/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent underline underline-offset-2"
-            >
-              File online (official site)
-            </a>
-          )}
-        </p>
-      </div>
+      )}
 
       <dl className="mt-6 divide-y divide-line border-y border-line">
         {rows.map((row) => {
@@ -124,19 +126,13 @@ export default function ReportCard({
         })}
       </dl>
 
-      <p className="mt-3 text-sm text-muted">
-        {source === "slip"
-          ? "Based on the due date on your receipt. A trip abroad would restart the count."
-          : `Counted from your last arrival on ${shortDate(arrivalDate)}. A trip abroad restarts this count. After you file, use the date on your new receipt.`}
-      </p>
-
       {status !== "not-open-yet" && !filing && (
         <button
           type="button"
           onClick={startFiling}
           className="mt-6 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85"
         >
-          Mark as filed
+          I did my report
         </button>
       )}
 
@@ -144,8 +140,8 @@ export default function ReportCard({
         <div className="mt-6 rounded-2xl bg-background p-5 motion-safe:animate-rise">
           <DateField
             id="next-due"
-            label="Next report due (on your new receipt)"
-            hint={`Usually 90 days later. We filled in ${shortDate(suggestion)}; change it if your receipt shows a different date.`}
+            label="Next due date on your new receipt"
+            hint="Usually 90 days later. Check your receipt."
             value={nextDue}
             onChange={setNextDue}
           />

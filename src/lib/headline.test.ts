@@ -14,9 +14,9 @@ describe("headline", () => {
     ]);
   });
 
-  it("tells you to file now while the window is open", () => {
+  it("tells you to do it now while the window is open", () => {
     expect(headline("2026-10-13", { status: "open", dates }, null)).toEqual([
-      "File your 90-day report now. It's due in 4 days (17 Oct 2026).",
+      "Do your 90-day report now. It's due in 4 days (17 Oct 2026).",
     ]);
   });
 
@@ -28,22 +28,22 @@ describe("headline", () => {
 
   it("names the last day without a fine during the grace period", () => {
     expect(headline("2026-10-20", { status: "grace", dates }, null)).toEqual([
-      "Your 90-day report is overdue. File by 24 Oct 2026 to avoid a fine.",
+      "Your 90-day report is overdue. Do it by 24 Oct 2026 to avoid a fine.",
     ]);
   });
 
   it("states the usual fine when the report is late", () => {
     expect(headline("2026-10-30", { status: "late", dates }, null)).toEqual([
-      "Your 90-day report is late. You may be fined 2,000 THB when you file.",
+      "Your 90-day report is late. Expect a 2,000 THB fine.",
     ]);
   });
 
   it.each([
-    [305, "You can stay until 14 Aug 2027 (305 days left)."],
-    [1, "You can stay until 14 Aug 2027 (1 day left)."],
-    [0, "Today is the last day you can stay."],
-    [-1, "You've overstayed by 1 day."],
-    [-5, "You've overstayed by 5 days."],
+    [305, "Your visa expires 14 Aug 2027 (305 days left)."],
+    [1, "Your visa expires 14 Aug 2027 (1 day left)."],
+    [0, "Your visa expires today."],
+    [-1, "Your visa expired 1 day ago."],
+    [-5, "Your visa expired 5 days ago."],
   ])("with %i days left says %s", (daysLeft, expected) => {
     expect(headline("2026-10-13", null, { permittedUntil: "2027-08-14", daysLeft })).toEqual([expected]);
   });
@@ -52,8 +52,8 @@ describe("headline", () => {
     expect(
       headline("2026-10-13", { status: "open", dates }, { permittedUntil: "2027-08-14", daysLeft: 305 }),
     ).toEqual([
-      "File your 90-day report now. It's due in 4 days (17 Oct 2026).",
-      "You can stay until 14 Aug 2027 (305 days left).",
+      "Do your 90-day report now. It's due in 4 days (17 Oct 2026).",
+      "Your visa expires 14 Aug 2027 (305 days left).",
     ]);
   });
 });

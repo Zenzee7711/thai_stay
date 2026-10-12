@@ -22,20 +22,20 @@ export function headline(
       lines.push(
         toDue === 0
           ? "Your 90-day report is due today."
-          : `File your 90-day report now. It's due ${relativeDays(toDue)} (${shortDate(dates.due)}).`,
+          : `Do your 90-day report now. It's due ${relativeDays(toDue)} (${shortDate(dates.due)}).`,
       );
     } else if (status === "grace") {
-      lines.push(`Your 90-day report is overdue. File by ${shortDate(dates.lastDay)} to avoid a fine.`);
+      lines.push(`Your 90-day report is overdue. Do it by ${shortDate(dates.lastDay)} to avoid a fine.`);
     } else {
-      lines.push("Your 90-day report is late. You may be fined 2,000 THB when you file.");
+      lines.push("Your 90-day report is late. Expect a 2,000 THB fine.");
     }
   }
 
   if (stay) {
     const { permittedUntil, daysLeft } = stay;
-    if (daysLeft < 0) lines.push(`You've overstayed by ${days(-daysLeft)}.`);
-    else if (daysLeft === 0) lines.push("Today is the last day you can stay.");
-    else lines.push(`You can stay until ${shortDate(permittedUntil)} (${days(daysLeft)} left).`);
+    if (daysLeft < 0) lines.push(`Your visa expired ${days(-daysLeft)} ago.`);
+    else if (daysLeft === 0) lines.push("Your visa expires today.");
+    else lines.push(`Your visa expires ${shortDate(permittedUntil)} (${days(daysLeft)} left).`);
   }
 
   return lines;

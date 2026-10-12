@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import Card from "@/components/Card";
+import { officeClosedReason } from "@/lib/holidays";
 import { directionsUrl, nearestOffices, offices, type Office } from "@/lib/offices";
 
 type Nearby = { office: Office; km: number }[];
@@ -10,6 +12,8 @@ export default function OfficeFinder() {
   const [nearby, setNearby] = useState<Nearby | null>(null);
   const [status, setStatus] = useState<"idle" | "locating" | "denied">("idle");
   const [picked, setPicked] = useState("");
+
+  const closedToday = officeClosedReason(format(new Date(), "yyyy-MM-dd"));
 
   function locate() {
     if (!navigator.geolocation) {
@@ -28,13 +32,19 @@ export default function OfficeFinder() {
   }
 
   const pickedOffice = offices.find((office) => office.name === picked);
+  const shown = pickedOffice ? [{ office: pickedOffice, km: null }] : (nearby ?? []);
 
   return (
     <Card title="Immigration office">
       <p className="mt-3 text-muted">
-        Reports that must be done in person, and extensions of stay, are done at the immigration
-        office for the province where you live.
+        For in-person reports and visa extensions. Usually open Monday to Friday, about 8:30 to
+        16:30. Closed on weekends and public holidays.
       </p>
+      {closedToday && (
+        <p className="mt-2 text-sm font-medium">
+          Closed today ({closedToday === "Saturday" || closedToday === "Sunday" ? "weekend" : closedToday}).
+        </p>
+      )}
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <button
@@ -43,10 +53,10 @@ export default function OfficeFinder() {
           disabled={status === "locating"}
           className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-50"
         >
-          {status === "locating" ? "Finding your location…" : "Find the nearest office"}
+          {status === "locating" ? "Finding you…" : "Find the nearest office"}
         </button>
         <label htmlFor="office-picker" className="sr-only">
-          Or choose an office
+          Or choose your area
         </label>
         <select
           id="office-picker"
@@ -66,21 +76,16 @@ export default function OfficeFinder() {
       </div>
 
       {status === "denied" && (
-        <p className="mt-3 text-sm text-muted">
-          Location isn&apos;t available. Choose your area from the list instead.
-        </p>
+        <p className="mt-3 text-sm text-muted">Location is off. Choose your area instead.</p>
       )}
 
-      {(nearby || pickedOffice) && (
+      {shown.length > 0 && (
         <ul className="mt-5 divide-y divide-line border-y border-line">
-          {(pickedOffice ? [{ office: pickedOffice, km: null }] : (nearby ?? [])).map(({ office, km }, i) => (
+          {shown.map(({ office, km }, i) => (
             <li key={office.name} className="flex items-center justify-between gap-4 py-3">
               <div className="min-w-0">
                 <p className={i === 0 ? "font-medium" : ""}>{office.name}</p>
-                <p className="text-sm text-muted">
-                  {office.area}
-                  {km !== null && ` · about ${km} km away${i === 0 ? " (nearest)" : ""}`}
-                </p>
+                {km !== null && <p className="text-sm text-muted">About {km} km away</p>}
               </div>
               <a
                 href={directionsUrl(office)}
@@ -96,9 +101,7 @@ export default function OfficeFinder() {
       )}
 
       <p className="mt-4 text-xs text-muted">
-        Your location stays on your device. Distances are approximate, and the list covers major
-        offices only. The office for your province may not be the closest one, so check your
-        address if you live near a border between provinces.
+        Check the hours before you go. Your location stays on your phone.
       </p>
     </Card>
   );

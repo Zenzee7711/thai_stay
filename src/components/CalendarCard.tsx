@@ -17,11 +17,7 @@ function downloadCalendar(events: CalendarEvent[]) {
 export default function CalendarCard({ events }: { events: CalendarEvent[] }) {
   return (
     <Card title="Add to calendar">
-      <p className="mt-3 text-muted">
-        Add each date to Google Calendar, or download them all for Apple Calendar or Outlook.
-      </p>
-
-      <ul className="mt-6 divide-y divide-line border-y border-line">
+      <ul className="mt-5 divide-y divide-line border-y border-line">
         {events.map((event) => (
           <li key={event.title} className="flex items-center justify-between gap-4 py-3">
             <div className="min-w-0">
@@ -49,11 +45,10 @@ export default function CalendarCard({ events }: { events: CalendarEvent[] }) {
         onClick={() => downloadCalendar(events)}
         className="mt-6 w-full rounded-full bg-foreground px-5 py-3 font-medium text-background transition hover:opacity-85 sm:w-auto"
       >
-        Download all (.ics)
+        Download all for iPhone or Outlook
       </button>
       <p className="mt-3 text-xs text-muted">
-        The download includes reminders at 9:00 on each date, and a few days earlier for the due
-        date, the last day without a fine and the end of your stay.
+        Includes reminders before each date.
       </p>
     </Card>
   );

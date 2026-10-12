@@ -11,7 +11,7 @@ type JourneyTrackProps = {
 
 function stopName(milestone: Milestone): string {
   if (milestone.key === "arrived") return "Arrived";
-  if (milestone.key === "stay") return "Leave by";
+  if (milestone.key === "stay") return "Visa ends";
   return "Report";
 }
 
@@ -190,13 +190,12 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
             </p>
             {chosen.key === "arrived" && (
               <p className="mt-2 text-sm text-muted">
-                Your 90-day count started here. A trip abroad restarts it from your next arrival.
+                Your 90-day count starts here. A trip abroad restarts it.
               </p>
             )}
             {chosen.estimated && (
               <p className="mt-2 text-sm text-muted">
-                The exact date will be on your receipt after the report before it. A trip abroad
-                changes it.
+                Your receipt will show the exact date.
               </p>
             )}
           </div>
@@ -229,14 +228,14 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
 
       <p className="mt-5 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-muted">
         <span className="inline-flex items-center gap-2">
-          <span aria-hidden="true" className="h-2 w-4 rounded-full bg-accent/30" /> Filing window
+          <span aria-hidden="true" className="h-2 w-4 rounded-full bg-accent/30" /> Time to report
         </span>
         <span className="inline-flex items-center gap-2">
           <span aria-hidden="true" className="h-2 w-4 rounded-full bg-amber-400/45" /> Late, no fine yet
         </span>
         <span className="inline-flex items-center gap-2">
           <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full border-2 border-dashed border-foreground/50" />
-          ~ Estimated report
+          ~ Estimate
         </span>
       </p>
     </section>

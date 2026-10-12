@@ -35,7 +35,7 @@ export function journeyMilestones(input: {
     });
   }
   if (permittedUntil) {
-    milestones.push({ key: "stay", label: "Last day of stay", date: permittedUntil, estimated: false });
+    milestones.push({ key: "stay", label: "Visa expires", date: permittedUntil, estimated: false });
   }
   return milestones.sort((a, b) => a.date.localeCompare(b.date));
 }
