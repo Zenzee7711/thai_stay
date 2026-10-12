@@ -87,8 +87,8 @@ Remembering them, and knowing which rule applies, is. So I reworked it in stages
 4. **Testing with my own dates.** Entering my real student-visa dates showed several problems.
    The timeline had no years and showed only the first report. My old receipt from before a trip
    to Indonesia made the app say I was late when I wasn't. The wording was too vague. I fixed
-   each one, and added the in person or online answer and the office finder, the two questions
-   juniors ask most.
+   each one, and added the in person or online answer and the office finder, because those
+   confused me too when I was new.
 
 The commit history follows these stages.
 
@@ -176,7 +176,6 @@ iPhone, iPad and in-app browser detection, and a check that every guide cites a 
 - **Every immigration office.** The office finder covers major offices, with the north
   (Chiang Rai, Phayao, Chiang Mai) covered for my university. Adding every provincial office
   with exact locations is next.
-- **Thai and Burmese translations** for students who are more comfortable in those languages.
 
 ## Sources and disclaimer
 
