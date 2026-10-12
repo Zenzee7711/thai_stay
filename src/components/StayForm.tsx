@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import CalendarCard from "@/components/CalendarCard";
 import DateField from "@/components/DateField";
+import HomeScreenHint from "@/components/HomeScreenHint";
 import JourneyTrack from "@/components/JourneyTrack";
 import ReportCard from "@/components/ReportCard";
 import StayCard from "@/components/StayCard";
@@ -145,6 +146,8 @@ export default function StayForm() {
             {notice}
           </p>
         )}
+
+        {hasAnyDate && <HomeScreenHint />}
       </section>
 
       <div className="mt-12 space-y-5">
