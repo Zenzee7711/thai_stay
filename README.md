@@ -2,7 +2,7 @@
 
 A small app I built to keep track of my 90-day reports and permitted stay in Thailand. I'm an international student at Mae Fah Luang University, and I wanted something I could use myself and share with friends and juniors who are still getting used to the process.
 
-**[Open Thai Stay](https://thai-stay-one.vercel.app)**
+Hosted in vercel for daily use for those who wanna try **[Open Thai Stay](https://thai-stay-one.vercel.app)**
 
 Enter your latest arrival date, the permitted-until date from your passport stamp, and the next report date from your receipt if you have one. The app puts them on a timeline, shows what's coming up, and lets you add reminders to Google Calendar, Apple Calendar, or Outlook.
 
