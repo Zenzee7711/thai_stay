@@ -1,6 +1,6 @@
 # Thai Stay
 
-A small app I built to keep track of my 90-day reports and permitted stay in Thailand. I'm an international student at Mae Fah Luang University, and I wanted something I could use myself and share with friends and juniors who are still getting used to the process.
+A small app I built to keep track of my 90-day reports and permitted stay in Thailand. As an international student studying abroad at Mae Fah Luang University, I wanted something I could use myself and share with friends and juniors who are still getting used to the process.
 
 Hosted in vercel for daily use for those who wanna try **[Open Thai Stay](https://thai-stay-one.vercel.app)**
 
