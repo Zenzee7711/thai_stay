@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
+/* Design tokens: every colour the app uses, named once.
+   Components use the names (bg-card, text-muted, border-line ...),
+   so changing the theme only means editing this file. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f6f8;
+  --foreground: #14171f;
+  --card: #ffffff;
+  --muted: #5b6372;
+  --line: #e2e5eb;
+  --accent: #0f766e;
+  --accent-foreground: #ffffff;
 }
 
+/* The same names with dark-mode values. The browser picks this block
+   automatically when the phone or computer is set to dark mode. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0d12;
+    --foreground: #e8eaf0;
+    --card: #141821;
+    --muted: #9aa3b2;
+    --line: #262c38;
+    --accent: #2dd4bf;
+    --accent-foreground: #04201c;
+  }
+}
+
+/* Tells Tailwind about our tokens, which creates classes like bg-card and text-muted. */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Makes the calendar icon inside date inputs visible in dark mode. */
+@media (prefers-color-scheme: dark) {
+  input[type="date"] {
+    color-scheme: dark;
+  }
 }

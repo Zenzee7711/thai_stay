@@ -12,23 +12,39 @@ const sources = [
 
 export default function Home() {
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Thai Stay</h1>
-      <p className="mt-2">Track your 90-day report and visa deadlines in Thailand.</p>
-      <p className="mt-1 text-sm">Your dates stay in your browser. Nothing is sent or saved.</p>
+    // max-w-2xl keeps lines readable on wide screens; px-4 keeps a gap from phone edges.
+    <main className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-14">
+      <header>
+        <p className="text-sm font-medium text-accent">Thailand · 90-day report &amp; stay tracker</p>
+        <h1 className="mt-1 text-4xl font-bold tracking-tight">Thai Stay</h1>
+        <p className="mt-3 text-lg text-muted">
+          Enter the dates from your passport and TM.47 slip. See every deadline at a glance, then
+          add them to your calendar.
+        </p>
+        <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-sm text-muted">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
+          Your dates never leave this browser
+        </p>
+      </header>
 
       <StayForm />
 
-      <footer className="mt-12 border-t pt-4 text-sm">
+      <footer className="mt-10 rounded-2xl border border-line bg-card p-5 text-sm text-muted">
         <p>
-          This is not legal advice. Dates calculated from your arrival are estimates, and rules
-          can change. Always check with the Immigration Bureau or your local immigration office.
+          <span className="font-semibold text-foreground">Not legal advice.</span> Dates estimated
+          from your arrival are estimates, and rules can change. Always check with the Immigration
+          Bureau or your local immigration office.
         </p>
-        <p className="mt-2 font-medium">Sources</p>
-        <ul className="mt-1 list-disc pl-5">
+        <p className="mt-4 font-semibold text-foreground">Sources</p>
+        <ul className="mt-2 space-y-1">
           {sources.map((source) => (
             <li key={source.href}>
-              <a href={source.href} target="_blank" rel="noopener noreferrer" className="underline">
+              <a
+                href={source.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-line underline-offset-4 hover:text-accent"
+              >
                 {source.label}
               </a>
             </li>
