@@ -3,30 +3,35 @@ import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import GuideDetails from "@/components/GuideDetails";
 import { daysBetween, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
-import { displayDate, relativeDays, shortDate } from "@/lib/format";
+import { relativeDays, shortDate } from "@/lib/format";
 import { reportGuide } from "@/lib/guides";
 
-// One entry per status: the badge text, its colours, and what to do.
-const statusStyles: Record<ReportStatus, { badge: string; colors: string; advice: string }> = {
+type ReportDates = { opens: string; due: string; lastDay: string };
+
+// Per status: a short badge, its colours, and one clear instruction with the date that matters.
+const statusStyles: Record<
+  ReportStatus,
+  { badge: string; colors: string; advice: (dates: ReportDates) => string }
+> = {
   "not-open-yet": {
-    badge: "Not open yet",
+    badge: "Upcoming",
     colors: "bg-line/60 text-muted",
-    advice: "Nothing to do yet. Your reporting window hasn't opened.",
+    advice: (dates) => `You can file from ${shortDate(dates.opens)}.`,
   },
   open: {
-    badge: "Report now",
+    badge: "File now",
     colors: "bg-accent/12 text-accent",
-    advice: "Your window is open. Report online or at your immigration office.",
+    advice: () => "You can file now, online or at your immigration office.",
   },
   grace: {
-    badge: "Overdue, no fine yet",
+    badge: "Overdue",
     colors: "bg-amber-400/15 text-amber-700 dark:text-amber-300",
-    advice: "You're past the due date. Report before the last day to avoid a fine.",
+    advice: (dates) => `File by ${shortDate(dates.lastDay)} to avoid a 2,000 THB fine.`,
   },
   late: {
     badge: "Late",
     colors: "bg-red-500/12 text-red-700 dark:text-red-300",
-    advice: "The grace period is over. Expect a fine when you report at the immigration office.",
+    advice: () => "The grace period has ended. You may be fined 2,000 THB when you file.",
   },
 };
 
@@ -34,20 +39,20 @@ type ReportCardProps = {
   today: string;
   status: ReportStatus;
   source: "slip" | "estimate";
-  dates: { opens: string; due: string; lastDay: string };
+  dates: ReportDates;
   onFiled: (nextDue: string) => void;
 };
 
 export default function ReportCard({ today, status, source, dates, onFiled }: ReportCardProps) {
   const style = statusStyles[status];
   const suggestion = suggestNextDue(dates.due);
-  const steps = [
-    { label: "Window opens", date: dates.opens },
-    { label: "Report due", date: dates.due },
-    { label: "Last day before a fine", date: dates.lastDay },
+  const rows = [
+    { label: "Can file from", date: dates.opens },
+    { label: "Due date", date: dates.due },
+    { label: "Last day without a fine", date: dates.lastDay },
   ];
 
-  // Whether the "I've filed" box is open, and the date typed into it.
+  // Whether the "mark as filed" box is open, and the date typed into it.
   const [filing, setFiling] = useState(false);
   const [nextDue, setNextDue] = useState("");
 
@@ -63,7 +68,7 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
   }
 
   return (
-    <Card title="90-day report · TM.47">
+    <Card title="90-day report (TM.47)">
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <p className="font-serif text-4xl sm:text-5xl">
           Due {relativeDays(daysBetween(today, dates.due))}
@@ -72,16 +77,16 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
           {style.badge}
         </span>
       </div>
-      <p className="mt-2 text-muted">{style.advice}</p>
+      <p className="mt-2 text-muted">{style.advice(dates)}</p>
 
       <dl className="mt-6 divide-y divide-line border-y border-line">
-        {steps.map((step) => {
-          const days = daysBetween(today, step.date);
+        {rows.map((row) => {
+          const days = daysBetween(today, row.date);
           return (
-            <div key={step.label} className="flex items-baseline justify-between gap-4 py-3">
-              <dt className={days < 0 ? "text-muted line-through decoration-line" : ""}>{step.label}</dt>
+            <div key={row.label} className="flex items-baseline justify-between gap-4 py-3">
+              <dt className={days < 0 ? "text-muted" : ""}>{row.label}</dt>
               <dd className="text-right tabular-nums">
-                {shortDate(step.date)}
+                {shortDate(row.date)}
                 <span className="ml-2 text-sm text-muted">{relativeDays(days)}</span>
               </dd>
             </div>
@@ -91,8 +96,8 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
 
       <p className="mt-3 text-sm text-muted">
         {source === "slip"
-          ? "Due date taken from your TM.47 slip."
-          : "Estimated from your arrival date. After your first report, use the date on your slip."}
+          ? "Dates based on the due date from your receipt."
+          : "Estimated from your arrival date. After you file, use the date on your receipt."}
       </p>
 
       {status !== "not-open-yet" && !filing && (
@@ -101,7 +106,7 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
           onClick={startFiling}
           className="mt-6 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85"
         >
-          I&apos;ve filed this report
+          Mark as filed
         </button>
       )}
 
@@ -109,8 +114,8 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
         <div className="mt-6 rounded-2xl bg-background p-5 motion-safe:animate-rise">
           <DateField
             id="next-due"
-            label="Next due date on your new receipt"
-            hint={`Usually about 90 days later, around ${displayDate(suggestion)}. Use the date on your receipt.`}
+            label="Next report due (on your new receipt)"
+            hint={`Usually 90 days later. We filled in ${shortDate(suggestion)}; change it if your receipt shows a different date.`}
             value={nextDue}
             onChange={setNextDue}
           />

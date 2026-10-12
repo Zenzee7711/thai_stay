@@ -13,6 +13,7 @@ import { deadlineEvents } from "@/lib/calendar";
 import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
 import { headline } from "@/lib/headline";
 import { journeyMilestones } from "@/lib/journey";
+import { shortDate } from "@/lib/format";
 import { afterReentry, type Profile } from "@/lib/profile";
 
 // Holds every input's state, works out the deadlines, and hands them to the cards.
@@ -38,26 +39,30 @@ export default function StayForm() {
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
-  const sentences = headline(today, reportDates && status ? { status, dates: reportDates } : null, daysLeft);
-  const milestones = journeyMilestones({ arrivalDate, report: reportDates, permittedUntil });
+  const sentences = headline(
+    today,
+    reportDates && status ? { status, dates: reportDates } : null,
+    daysLeft !== null ? { permittedUntil, daysLeft } : null,
+  );
+  const milestones = journeyMilestones({ arrivalDate, nextDue: due?.date ?? null, permittedUntil });
   const calendarEvents = deadlineEvents(reportDates, permittedUntil);
 
   function cameBackToday() {
     save(afterReentry(profile, today));
     setNotice(
-      "Your 90-day count restarted today. Check the new stamp in your passport and update \"Stay until\" if it changed.",
+      "Done. Your 90-day count now starts today. If you got a new stamp, update \"Allowed to stay until\".",
     );
   }
 
   function filedReport(nextDue: string) {
     update({ slipDueDate: nextDue });
-    setNotice("Saved. Your next report is now counted from the date on your receipt.");
+    setNotice(`Saved. Your next report is due ${shortDate(nextDue)}.`);
   }
 
   return (
     <div className="mt-12 sm:mt-16">
       {/* The headline: where you stand, in one or two sentences. */}
-      <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-balance sm:text-6xl">
+      <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-balance sm:text-5xl">
         {sentences.length > 0 ? (
           sentences.map((sentence, index) => (
             <span key={sentence} className={index > 0 ? "text-muted" : ""}>
@@ -66,8 +71,8 @@ export default function StayForm() {
           ))
         ) : (
           <>
-            Every deadline of your stay in Thailand,{" "}
-            <span className="text-muted">on one quiet page.</span>
+            Track your 90-day report and visa dates in Thailand.{" "}
+            <span className="text-muted">Start by adding your dates below.</span>
           </>
         )}
       </h1>
@@ -85,28 +90,27 @@ export default function StayForm() {
         <div className="grid gap-5 sm:grid-cols-3">
           <DateField
             id="arrival"
-            label="Arrived"
+            label="Last arrival"
             value={arrivalDate}
             onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
-            label="Stay until"
+            label="Allowed to stay until"
             value={permittedUntil}
             onChange={(value) => update({ permittedUntil: value })}
           />
           <DateField
             id="slip"
-            label="Next report · slip"
+            label="Next report due"
             value={slipDueDate}
             onChange={(value) => update({ slipDueDate: value })}
           />
         </div>
         <p className="mt-3 text-sm text-muted">
-          <span className="text-foreground">Arrived</span> is your latest entry stamp.{" "}
-          <span className="text-foreground">Stay until</span> is the date on that stamp.{" "}
-          <span className="text-foreground">Next report</span> is printed on your last TM.47 slip.
-          Leave it empty for your first report, or if you&apos;ve left Thailand since.
+          The first two dates are on the latest entry stamp in your passport. The next report date
+          is on your last TM.47 receipt. Leave it blank before your first report, or if you have
+          travelled abroad since.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -120,7 +124,7 @@ export default function StayForm() {
             onClick={cameBackToday}
             className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-foreground/30"
           >
-            I just came back to Thailand
+            I just re-entered Thailand
           </button>
           {hasAnyDate && (
             <button
@@ -131,7 +135,7 @@ export default function StayForm() {
               }}
               className="text-sm text-muted underline decoration-line underline-offset-4 hover:text-foreground"
             >
-              Clear my dates
+              Clear dates
             </button>
           )}
         </div>

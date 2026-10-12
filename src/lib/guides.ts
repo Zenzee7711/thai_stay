@@ -7,7 +7,7 @@ export type Guide = {
 };
 
 export const reportGuide: Guide = {
-  title: "How to file your 90-day report",
+  title: "How to file the 90-day report",
   sections: [
     {
       heading: "Ways to report",
@@ -18,10 +18,10 @@ export const reportGuide: Guide = {
       ],
     },
     {
-      heading: "Bring (in person)",
+      heading: "What to bring (in person)",
       items: [
         "Your passport",
-        "Form TM.47, top half filled in and signed (the officer completes the rest as your receipt)",
+        "Form TM.47 with the top half filled in and signed. The officer completes the rest and returns it as your receipt.",
         "Copies of your passport photo page, your visa and your latest entry stamp",
         "Your previous 90-day receipt, if you have one",
       ],
@@ -39,14 +39,14 @@ export const reportGuide: Guide = {
 };
 
 export const extensionGuide: Guide = {
-  title: "Extend your stay or leave",
+  title: "Extending your stay",
   sections: [
     {
-      heading: "Your options before the date",
+      heading: "Before your last day",
       items: [
         "Apply for an extension of stay at your local immigration office before your permission ends, if your visa type allows one. The form is TM.7 and the fee is 1,900 THB.",
         "The documents needed depend on why you are staying (work, study, marriage, retirement and so on). Ask your office for its checklist.",
-        "Or leave Thailand on or before your last permitted day.",
+        "If you can't extend, leave Thailand on or before your last day.",
       ],
     },
     {

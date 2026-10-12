@@ -9,7 +9,7 @@ export type CalendarEvent = {
 
 const footer = "From Thai Stay (thai-stay-one.vercel.app). Not legal advice: check with Immigration.";
 
-// Turns the deadlines we know about into calendar events, with sensible reminders.
+// Turns the deadlines we know about into calendar events, with reminders.
 export function deadlineEvents(
   report: { opens: string; due: string; lastDay: string } | null,
   permittedUntil: string,
@@ -19,8 +19,8 @@ export function deadlineEvents(
     events.push(
       {
         date: report.opens,
-        title: "90-day report window opens",
-        details: `You can file your 90-day report (TM.47) from today. ${footer}`,
+        title: "90-day report: you can file from today",
+        details: `Your 90-day report (TM.47) can be filed from today. ${footer}`,
         remindDaysBefore: [],
       },
       {
@@ -31,8 +31,8 @@ export function deadlineEvents(
       },
       {
         date: report.lastDay,
-        title: "Last day to file 90-day report before a fine",
-        details: `After today a late 90-day report usually means a 2000 THB fine. ${footer}`,
+        title: "90-day report: last day without a fine",
+        details: `File today at the latest. After today the usual fine is 2000 THB. ${footer}`,
         remindDaysBefore: [2],
       },
     );
@@ -40,8 +40,8 @@ export function deadlineEvents(
   if (permittedUntil) {
     events.push({
       date: permittedUntil,
-      title: "Permission to stay in Thailand ends",
-      details: `Extend your stay or leave Thailand by today to avoid overstaying. ${footer}`,
+      title: "Last day of your permitted stay in Thailand",
+      details: `Leave Thailand or get an extension by today. Overstaying costs 500 THB a day. ${footer}`,
       remindDaysBefore: [30, 7],
     });
   }

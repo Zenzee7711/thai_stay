@@ -8,50 +8,52 @@ describe("headline", () => {
     expect(headline("2026-10-13", null, null)).toEqual([]);
   });
 
-  it("counts down to the window opening", () => {
+  it("gives the due date before the window opens", () => {
     expect(headline("2026-09-28", { status: "not-open-yet", dates }, null)).toEqual([
-      "Your 90-day report window opens in 4 days.",
+      "Your next 90-day report is due 17 Oct 2026.",
     ]);
   });
 
-  it("counts down to the due date while the window is open", () => {
+  it("tells you to file now while the window is open", () => {
     expect(headline("2026-10-13", { status: "open", dates }, null)).toEqual([
-      "Your 90-day report is due in 4 days.",
+      "File your 90-day report now. It's due in 4 days (17 Oct 2026).",
     ]);
   });
 
-  it("says 'today' on the due date", () => {
+  it("keeps it short on the due date", () => {
     expect(headline("2026-10-17", { status: "open", dates }, null)).toEqual([
       "Your 90-day report is due today.",
     ]);
   });
 
-  it("names the last day during the grace period, with a short month", () => {
+  it("names the last day without a fine during the grace period", () => {
     expect(headline("2026-10-20", { status: "grace", dates }, null)).toEqual([
-      "Your 90-day report was due 3 days ago. File by 24 Oct 2026 to avoid a fine.",
+      "Your 90-day report is overdue. File by 24 Oct 2026 to avoid a fine.",
     ]);
   });
 
-  it("warns when the report is late", () => {
+  it("states the usual fine when the report is late", () => {
     expect(headline("2026-10-30", { status: "late", dates }, null)).toEqual([
-      "Your 90-day report is late. Expect a fine when you file.",
+      "Your 90-day report is late. You may be fined 2,000 THB when you file.",
     ]);
   });
 
   it.each([
-    [192, "You can stay 192 more days."],
-    [1, "You can stay 1 more day."],
-    [0, "Today is your last permitted day."],
-    [-1, "You have overstayed by 1 day."],
-    [-5, "You have overstayed by 5 days."],
+    [305, "You can stay until 14 Aug 2027 (305 days left)."],
+    [1, "You can stay until 14 Aug 2027 (1 day left)."],
+    [0, "Today is the last day you can stay."],
+    [-1, "You've overstayed by 1 day."],
+    [-5, "You've overstayed by 5 days."],
   ])("with %i days left says %s", (daysLeft, expected) => {
-    expect(headline("2026-10-13", null, daysLeft)).toEqual([expected]);
+    expect(headline("2026-10-13", null, { permittedUntil: "2027-08-14", daysLeft })).toEqual([expected]);
   });
 
   it("puts the report sentence before the stay sentence", () => {
-    expect(headline("2026-10-13", { status: "open", dates }, 192)).toEqual([
-      "Your 90-day report is due in 4 days.",
-      "You can stay 192 more days.",
+    expect(
+      headline("2026-10-13", { status: "open", dates }, { permittedUntil: "2027-08-14", daysLeft: 305 }),
+    ).toEqual([
+      "File your 90-day report now. It's due in 4 days (17 Oct 2026).",
+      "You can stay until 14 Aug 2027 (305 days left).",
     ]);
   });
 });

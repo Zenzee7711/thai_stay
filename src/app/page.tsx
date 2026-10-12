@@ -20,9 +20,8 @@ export default function Home() {
 
       <footer className="mt-20 space-y-3 border-t border-line pt-6 text-sm text-muted">
         <p>
-          Your dates are saved only in this browser and never sent anywhere. This is not legal
-          advice: estimated dates are estimates and rules change, so always check with
-          Immigration.
+          Your dates are saved in this browser only and are never sent anywhere. This is not legal
+          advice. Rules and fees can change, so check with Immigration before you act.
         </p>
         <p className="flex flex-wrap gap-x-4 gap-y-1">
           {sources.map((source) => (
