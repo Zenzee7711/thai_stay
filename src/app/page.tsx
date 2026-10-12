@@ -23,7 +23,7 @@ export default function Home() {
         </p>
         <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-sm text-muted">
           <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
-          Your dates never leave this browser
+          Saved only in this browser, never sent anywhere
         </p>
       </header>
 

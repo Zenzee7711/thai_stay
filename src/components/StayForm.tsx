@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { format } from "date-fns";
 import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import ReportCard from "@/components/ReportCard";
 import StayCard from "@/components/StayCard";
 import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
+import { useStoredProfile } from "@/hooks/useStoredProfile";
 import { buildCalendar, type CalendarEvent } from "@/lib/ics";
+import type { Profile } from "@/lib/profile";
 
 // Turns the events into a file and makes the browser download it.
 function downloadCalendar(events: CalendarEvent[]) {
@@ -22,10 +23,15 @@ function downloadCalendar(events: CalendarEvent[]) {
 
 // Holds every input's state, works out the deadlines, and hands them to the cards.
 export default function StayForm() {
-  const [arrivalDate, setArrivalDate] = useState("");
-  const [slipDueDate, setSlipDueDate] = useState("");
-  const [permittedUntil, setPermittedUntil] = useState("");
-  const [hasReentryPermit, setHasReentryPermit] = useState(false);
+  const { profile, save, clear } = useStoredProfile();
+  const { arrivalDate, slipDueDate, permittedUntil, hasReentryPermit } = profile;
+
+  // Change some fields, keep the rest, and save it all.
+  function update(changes: Partial<Profile>) {
+    save({ ...profile, ...changes });
+  }
+
+  const hasAnyDate = Boolean(arrivalDate || slipDueDate || permittedUntil);
 
   // The real "today", in the same YYYY-MM-DD text format as everything else.
   const today = format(new Date(), "yyyy-MM-dd");
@@ -55,13 +61,13 @@ export default function StayForm() {
             id="arrival"
             label="Last arrival in Thailand"
             value={arrivalDate}
-            onChange={setArrivalDate}
+            onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
             label="Permitted to stay until"
             value={permittedUntil}
-            onChange={setPermittedUntil}
+            onChange={(value) => update({ permittedUntil: value })}
           />
           <div className="sm:col-span-2">
             <DateField
@@ -69,7 +75,7 @@ export default function StayForm() {
               label="Next report due, from your TM.47 slip (optional)"
               hint="Leave empty for your first report, or if you've left Thailand since your last one. Leaving resets the 90-day count."
               value={slipDueDate}
-              onChange={setSlipDueDate}
+              onChange={(value) => update({ slipDueDate: value })}
             />
           </div>
         </div>
@@ -78,11 +84,21 @@ export default function StayForm() {
           <input
             type="checkbox"
             checked={hasReentryPermit}
-            onChange={(event) => setHasReentryPermit(event.target.checked)}
+            onChange={(event) => update({ hasReentryPermit: event.target.checked })}
             className="h-4 w-4 accent-accent"
           />
           I have a re-entry permit or a multiple-entry visa
         </label>
+
+        {hasAnyDate && (
+          <button
+            type="button"
+            onClick={clear}
+            className="mt-5 text-sm text-muted underline underline-offset-4 hover:text-foreground"
+          >
+            Clear my dates
+          </button>
+        )}
       </Card>
 
       {!reportDates && daysLeft === null && (
