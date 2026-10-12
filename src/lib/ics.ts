@@ -1,5 +1,5 @@
 import { addDays, format, parseISO } from "date-fns";
-import type { CalendarEvent } from "@/lib/calendar";
+import type { CalendarEvent } from "./calendar";
 
 // Calendar text treats \ ; , and newlines as special, so they need a backslash.
 function escapeText(text: string): string {

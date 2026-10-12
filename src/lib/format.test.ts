@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { displayDate, relativeDays } from "./format";
+import { dayMonth, displayDate, relativeDays, shortDate } from "./format";
 
-describe("displayDate", () => {
-  it("shows the weekday, day, month and year", () => {
+describe("date formats use short month names, day first", () => {
+  it("displayDate shows the weekday, day, month and year", () => {
     expect(displayDate("2026-12-26")).toBe("Sat 26 Dec 2026");
+  });
+
+  it("shortDate drops the weekday", () => {
+    expect(shortDate("2026-07-20")).toBe("20 Jul 2026");
+  });
+
+  it("dayMonth drops the year too", () => {
+    expect(dayMonth("2027-02-03")).toBe("3 Feb");
   });
 });
 
