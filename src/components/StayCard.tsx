@@ -1,6 +1,8 @@
 import Card from "@/components/Card";
 import { stayLevel, type StayLevel } from "@/lib/deadlines";
+import GuideDetails from "@/components/GuideDetails";
 import { displayDate } from "@/lib/format";
+import { extensionGuide, reentryGuide } from "@/lib/guides";
 
 const levelStyles: Record<StayLevel, { number: string; advice: string }> = {
   ok: {
@@ -51,6 +53,9 @@ export default function StayCard({ permittedUntil, daysLeft, hasReentryPermit }:
           re-entry permit ends your current permission to stay. Get one before you go.
         </p>
       )}
+
+      <GuideDetails guide={extensionGuide} />
+      <GuideDetails guide={reentryGuide} />
     </Card>
   );
 }

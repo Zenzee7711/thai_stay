@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Card from "@/components/Card";
 import DateField from "@/components/DateField";
+import GuideDetails from "@/components/GuideDetails";
 import { daysBetween, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
 import { displayDate, relativeDays } from "@/lib/format";
+import { reportGuide } from "@/lib/guides";
 
 // One entry per status: the badge text, its colours, and what to do.
 const statusStyles: Record<ReportStatus, { badge: string; colors: string; advice: string }> = {
@@ -137,6 +139,8 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
           </div>
         </div>
       )}
+
+      <GuideDetails guide={reportGuide} />
 
       <p className="mt-6 border-t border-line pt-4 text-sm text-muted">
         {source === "slip"
