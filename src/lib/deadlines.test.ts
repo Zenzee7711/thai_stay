@@ -5,6 +5,7 @@ import {
   nextReportDue,
   reportStatus,
   reportWindow,
+  stayLevel,
 } from "./deadlines";
 
 describe("firstReportDue", () => {
@@ -82,5 +83,18 @@ describe("nextReportDue", () => {
 
   it("returns nothing when neither date is known", () => {
     expect(nextReportDue("", "")).toBeNull();
+  });
+});
+
+describe("stayLevel", () => {
+  it.each([
+    [31, "ok"],
+    [30, "soon"],
+    [8, "soon"],
+    [7, "urgent"],
+    [0, "urgent"],
+    [-1, "over"],
+  ])("%i days left is %s", (daysLeft, expected) => {
+    expect(stayLevel(daysLeft)).toBe(expected);
   });
 });

@@ -46,3 +46,13 @@ export function reportStatus(
   if (today <= dates.lastDay) return "grace";
   return "late";
 }
+
+// How worried to be about the permission-to-stay date, which sets the card's colour.
+export type StayLevel = "ok" | "soon" | "urgent" | "over";
+
+export function stayLevel(daysLeft: number): StayLevel {
+  if (daysLeft < 0) return "over";
+  if (daysLeft <= 7) return "urgent";
+  if (daysLeft <= 30) return "soon";
+  return "ok";
+}
