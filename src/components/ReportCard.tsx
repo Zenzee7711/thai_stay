@@ -3,29 +3,29 @@ import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import GuideDetails from "@/components/GuideDetails";
 import { daysBetween, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
-import { displayDate, relativeDays } from "@/lib/format";
+import { displayDate, relativeDays, shortDate } from "@/lib/format";
 import { reportGuide } from "@/lib/guides";
 
 // One entry per status: the badge text, its colours, and what to do.
 const statusStyles: Record<ReportStatus, { badge: string; colors: string; advice: string }> = {
   "not-open-yet": {
     badge: "Not open yet",
-    colors: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
+    colors: "bg-line/60 text-muted",
     advice: "Nothing to do yet. Your reporting window hasn't opened.",
   },
   open: {
     badge: "Report now",
-    colors: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+    colors: "bg-accent/12 text-accent",
     advice: "Your window is open. Report online or at your immigration office.",
   },
   grace: {
     badge: "Overdue, no fine yet",
-    colors: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+    colors: "bg-amber-400/15 text-amber-700 dark:text-amber-300",
     advice: "You're past the due date. Report before the last day to avoid a fine.",
   },
   late: {
     badge: "Late",
-    colors: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300",
+    colors: "bg-red-500/12 text-red-700 dark:text-red-300",
     advice: "The grace period is over. Expect a fine when you report at the immigration office.",
   },
 };
@@ -41,6 +41,11 @@ type ReportCardProps = {
 export default function ReportCard({ today, status, source, dates, onFiled }: ReportCardProps) {
   const style = statusStyles[status];
   const suggestion = suggestNextDue(dates.due);
+  const steps = [
+    { label: "Window opens", date: dates.opens },
+    { label: "Report due", date: dates.due },
+    { label: "Last day before a fine", date: dates.lastDay },
+  ];
 
   // Whether the "I've filed" box is open, and the date typed into it.
   const [filing, setFiling] = useState(false);
@@ -56,83 +61,72 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
     onFiled(nextDue);
     setFiling(false);
   }
-  const steps = [
-    { label: "Window opens", date: dates.opens },
-    { label: "Report due", date: dates.due },
-    { label: "Last day before a fine", date: dates.lastDay },
-  ];
 
   return (
-    <Card title="90-day report (TM.47)">
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <span className={`rounded-full px-3 py-1 text-sm font-semibold ${style.colors}`}>
-          {style.badge}
-        </span>
-        <span className="text-2xl font-bold">
+    <Card title="90-day report · TM.47">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <p className="font-serif text-4xl sm:text-5xl">
           Due {relativeDays(daysBetween(today, dates.due))}
+        </p>
+        <span className={`rounded-full px-3 py-1 text-sm font-medium ${style.colors}`}>
+          {style.badge}
         </span>
       </div>
       <p className="mt-2 text-muted">{style.advice}</p>
 
-      {/* A vertical timeline: a dot per date, filled in once that date has arrived. */}
-      <ol className="mt-6">
-        {steps.map((step, index) => {
+      <dl className="mt-6 divide-y divide-line border-y border-line">
+        {steps.map((step) => {
           const days = daysBetween(today, step.date);
-          const reached = days <= 0;
           return (
-            <li key={step.label} className="relative flex gap-4 pb-6 last:pb-0">
-              {index < steps.length - 1 && (
-                <span aria-hidden="true" className="absolute top-5 left-[7px] h-full w-px bg-line" />
-              )}
-              <span
-                aria-hidden="true"
-                className={`relative mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${
-                  reached ? "border-accent bg-accent" : "border-line bg-card"
-                }`}
-              />
-              <div>
-                <p className="font-medium">{step.label}</p>
-                <p className="text-sm text-muted">
-                  {displayDate(step.date)} · {relativeDays(days)}
-                </p>
-              </div>
-            </li>
+            <div key={step.label} className="flex items-baseline justify-between gap-4 py-3">
+              <dt className={days < 0 ? "text-muted line-through decoration-line" : ""}>{step.label}</dt>
+              <dd className="text-right tabular-nums">
+                {shortDate(step.date)}
+                <span className="ml-2 text-sm text-muted">{relativeDays(days)}</span>
+              </dd>
+            </div>
           );
         })}
-      </ol>
+      </dl>
+
+      <p className="mt-3 text-sm text-muted">
+        {source === "slip"
+          ? "Due date taken from your TM.47 slip."
+          : "Estimated from your arrival date. After your first report, use the date on your slip."}
+      </p>
 
       {status !== "not-open-yet" && !filing && (
         <button
           type="button"
           onClick={startFiling}
-          className="mt-6 rounded-xl border border-line px-4 py-2.5 font-medium hover:border-accent hover:text-accent"
+          className="mt-6 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85"
         >
           I&apos;ve filed this report
         </button>
       )}
 
       {filing && (
-        <div className="mt-6 rounded-xl border border-line bg-background p-4">
+        <div className="mt-6 rounded-2xl bg-background p-5 motion-safe:animate-rise">
           <DateField
             id="next-due"
-            label="Next due date, printed on your new receipt"
+            label="Next due date on your new receipt"
             hint={`Usually about 90 days later, around ${displayDate(suggestion)}. Use the date on your receipt.`}
             value={nextDue}
             onChange={setNextDue}
           />
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex gap-2">
             <button
               type="button"
               onClick={saveFiling}
               disabled={!nextDue}
-              className="rounded-xl bg-accent px-4 py-2.5 font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-50"
+              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition hover:opacity-90 disabled:opacity-40"
             >
               Save
             </button>
             <button
               type="button"
               onClick={() => setFiling(false)}
-              className="rounded-xl px-4 py-2.5 text-muted hover:text-foreground"
+              className="rounded-full px-5 py-2.5 text-sm text-muted hover:text-foreground"
             >
               Cancel
             </button>
@@ -140,13 +134,9 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
         </div>
       )}
 
-      <GuideDetails guide={reportGuide} />
-
-      <p className="mt-6 border-t border-line pt-4 text-sm text-muted">
-        {source === "slip"
-          ? "Due date taken from your TM.47 slip."
-          : "Due date estimated from your arrival date. After your first report, use the date printed on your slip."}
-      </p>
+      <div className="mt-6">
+        <GuideDetails guide={reportGuide} />
+      </div>
     </Card>
   );
 }

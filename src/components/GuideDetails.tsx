@@ -4,31 +4,35 @@ import type { Guide } from "@/lib/guides";
 // works with the keyboard and screen readers, and needs no React state.
 export default function GuideDetails({ guide }: { guide: Guide }) {
   return (
-    <details className="group mt-4 rounded-xl border border-line bg-background">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 font-medium">
+    <details className="group border-t border-line">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium transition hover:text-accent">
         {guide.title}
+        {/* A plus that turns into a cross when open. */}
         <svg
           aria-hidden="true"
           viewBox="0 0 20 20"
-          className="h-5 w-5 shrink-0 text-muted transition group-open:rotate-180"
+          className="h-5 w-5 shrink-0 text-muted transition-transform duration-200 group-open:rotate-45"
         >
-          <path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
       </summary>
 
-      <div className="space-y-4 px-4 pb-4 text-sm">
+      <div className="space-y-4 pb-5 text-sm">
         {guide.sections.map((section) => (
           <div key={section.heading}>
-            <p className="font-semibold">{section.heading}</p>
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-muted">
+            <p className="font-medium">{section.heading}</p>
+            <ul className="mt-1.5 space-y-1.5 text-muted">
               {section.items.map((item) => (
-                <li key={item}>{item}</li>
+                <li key={item} className="flex gap-3">
+                  <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-muted" />
+                  {item}
+                </li>
               ))}
             </ul>
           </div>
         ))}
 
-        <p className="border-t border-line pt-3 text-xs text-muted">
+        <p className="text-xs text-muted">
           Sources:{" "}
           {guide.sources.map((source, index) => (
             <span key={source.href}>
@@ -37,7 +41,7 @@ export default function GuideDetails({ guide }: { guide: Guide }) {
                 href={source.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-accent"
+                className="underline decoration-line underline-offset-2 hover:text-accent"
               >
                 {source.label}
               </a>

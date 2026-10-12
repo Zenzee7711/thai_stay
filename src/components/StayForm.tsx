@@ -3,13 +3,16 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import CalendarCard from "@/components/CalendarCard";
-import Card from "@/components/Card";
 import DateField from "@/components/DateField";
+import JourneyTrack from "@/components/JourneyTrack";
 import ReportCard from "@/components/ReportCard";
 import StayCard from "@/components/StayCard";
-import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
+import Switch from "@/components/Switch";
 import { useStoredProfile } from "@/hooks/useStoredProfile";
 import { deadlineEvents } from "@/lib/calendar";
+import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
+import { headline } from "@/lib/headline";
+import { journeyMilestones } from "@/lib/journey";
 import { afterReentry, type Profile } from "@/lib/profile";
 
 // Holds every input's state, works out the deadlines, and hands them to the cards.
@@ -35,12 +38,14 @@ export default function StayForm() {
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
+  const sentences = headline(today, reportDates && status ? { status, dates: reportDates } : null, daysLeft);
+  const milestones = journeyMilestones({ arrivalDate, report: reportDates, permittedUntil });
   const calendarEvents = deadlineEvents(reportDates, permittedUntil);
 
   function cameBackToday() {
     save(afterReentry(profile, today));
     setNotice(
-      "Your 90-day count restarted today. Check the new stamp in your passport and update \"Permitted to stay until\" if it changed.",
+      "Your 90-day count restarted today. Check the new stamp in your passport and update \"Stay until\" if it changed.",
     );
   }
 
@@ -50,47 +55,70 @@ export default function StayForm() {
   }
 
   return (
-    <div className="mt-8 space-y-6">
-      <Card title="Your dates">
-        <div className="mt-4 grid gap-5 sm:grid-cols-2">
+    <div className="mt-12 sm:mt-16">
+      {/* The headline: where you stand, in one or two sentences. */}
+      <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-balance sm:text-6xl">
+        {sentences.length > 0 ? (
+          sentences.map((sentence, index) => (
+            <span key={sentence} className={index > 0 ? "text-muted" : ""}>
+              {sentence}{" "}
+            </span>
+          ))
+        ) : (
+          <>
+            Every deadline of your stay in Thailand,{" "}
+            <span className="text-muted">on one quiet page.</span>
+          </>
+        )}
+      </h1>
+
+      {milestones.length > 0 && (
+        <div className="mt-12">
+          <JourneyTrack today={today} milestones={milestones} report={reportDates} />
+        </div>
+      )}
+
+      <section aria-labelledby="dates-heading" className="mt-14">
+        <h2 id="dates-heading" className="sr-only">
+          Your dates
+        </h2>
+        <div className="grid gap-5 sm:grid-cols-3">
           <DateField
             id="arrival"
-            label="Last arrival in Thailand"
+            label="Arrived"
             value={arrivalDate}
             onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
-            label="Permitted to stay until"
+            label="Stay until"
             value={permittedUntil}
             onChange={(value) => update({ permittedUntil: value })}
           />
-          <div className="sm:col-span-2">
-            <DateField
-              id="slip"
-              label="Next report due, from your TM.47 slip (optional)"
-              hint="Leave empty for your first report, or if you've left Thailand since your last one. Leaving resets the 90-day count."
-              value={slipDueDate}
-              onChange={(value) => update({ slipDueDate: value })}
-            />
-          </div>
-        </div>
-
-        <label className="mt-5 flex cursor-pointer items-center gap-3 text-sm">
-          <input
-            type="checkbox"
-            checked={hasReentryPermit}
-            onChange={(event) => update({ hasReentryPermit: event.target.checked })}
-            className="h-4 w-4 accent-accent"
+          <DateField
+            id="slip"
+            label="Next report · slip"
+            value={slipDueDate}
+            onChange={(value) => update({ slipDueDate: value })}
           />
-          I have a re-entry permit or a multiple-entry visa
-        </label>
+        </div>
+        <p className="mt-3 text-sm text-muted">
+          <span className="text-foreground">Arrived</span> is your latest entry stamp.{" "}
+          <span className="text-foreground">Stay until</span> is the date on that stamp.{" "}
+          <span className="text-foreground">Next report</span> is printed on your last TM.47 slip.
+          Leave it empty for your first report, or if you&apos;ve left Thailand since.
+        </p>
 
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <Switch
+            checked={hasReentryPermit}
+            onChange={(checked) => update({ hasReentryPermit: checked })}
+            label="I have a re-entry permit"
+          />
           <button
             type="button"
             onClick={cameBackToday}
-            className="rounded-xl border border-line px-4 py-2.5 text-sm font-medium hover:border-accent hover:text-accent"
+            className="rounded-full border border-line px-4 py-2 text-sm transition hover:border-foreground/30"
           >
             I just came back to Thailand
           </button>
@@ -101,7 +129,7 @@ export default function StayForm() {
                 clear();
                 setNotice("");
               }}
-              className="text-sm text-muted underline underline-offset-4 hover:text-foreground"
+              className="text-sm text-muted underline decoration-line underline-offset-4 hover:text-foreground"
             >
               Clear my dates
             </button>
@@ -109,37 +137,33 @@ export default function StayForm() {
         </div>
 
         {notice && (
-          <p role="status" className="mt-4 rounded-lg bg-background p-3 text-sm">
+          <p role="status" className="mt-5 rounded-2xl bg-accent/10 px-4 py-3 text-sm motion-safe:animate-rise">
             {notice}
           </p>
         )}
-      </Card>
+      </section>
 
-      {!reportDates && daysLeft === null && (
-        <p className="rounded-2xl border border-dashed border-line p-6 text-center text-muted">
-          Enter your arrival date or your permitted-until date to see your deadlines.
-        </p>
-      )}
+      <div className="mt-12 space-y-5">
+        {due && reportDates && status && (
+          <ReportCard
+            today={today}
+            status={status}
+            source={due.source}
+            dates={reportDates}
+            onFiled={filedReport}
+          />
+        )}
 
-      {due && reportDates && status && (
-        <ReportCard
-          today={today}
-          status={status}
-          source={due.source}
-          dates={reportDates}
-          onFiled={filedReport}
-        />
-      )}
+        {daysLeft !== null && (
+          <StayCard
+            permittedUntil={permittedUntil}
+            daysLeft={daysLeft}
+            hasReentryPermit={hasReentryPermit}
+          />
+        )}
 
-      {daysLeft !== null && (
-        <StayCard
-          permittedUntil={permittedUntil}
-          daysLeft={daysLeft}
-          hasReentryPermit={hasReentryPermit}
-        />
-      )}
-
-      {calendarEvents.length > 0 && <CalendarCard events={calendarEvents} />}
+        {calendarEvents.length > 0 && <CalendarCard events={calendarEvents} />}
+      </div>
     </div>
   );
 }

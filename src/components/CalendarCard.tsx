@@ -1,6 +1,6 @@
 import Card from "@/components/Card";
 import { googleCalendarUrl, type CalendarEvent } from "@/lib/calendar";
-import { displayDate } from "@/lib/format";
+import { shortDate } from "@/lib/format";
 import { buildCalendar } from "@/lib/ics";
 
 // Turns the events into a file and makes the browser download it.
@@ -16,25 +16,28 @@ function downloadCalendar(events: CalendarEvent[]) {
 
 export default function CalendarCard({ events }: { events: CalendarEvent[] }) {
   return (
-    <Card title="Add to your calendar">
-      <p className="mt-1 text-sm text-muted">
-        Google Calendar: tap a date, then Save. iPhone and Outlook: download them all at once.
-      </p>
+    <Card title="Never miss a date">
+      <p className="mt-4 font-serif text-3xl">Put them in your calendar.</p>
+      <p className="mt-2 text-muted">Tap a date to add it to Google Calendar, or get them all at once.</p>
 
-      <ul className="mt-4 divide-y divide-line">
+      <ul className="mt-6 divide-y divide-line border-y border-line">
         {events.map((event) => (
           <li key={event.title} className="flex items-center justify-between gap-4 py-3">
-            <div>
-              <p className="font-medium">{event.title}</p>
-              <p className="text-sm text-muted">{displayDate(event.date)}</p>
+            <div className="min-w-0">
+              <p className="truncate">{event.title}</p>
+              <p className="text-sm text-muted tabular-nums">{shortDate(event.date)}</p>
             </div>
             <a
               href={googleCalendarUrl(event)}
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 rounded-lg border border-line px-3 py-2 text-sm font-medium hover:border-accent hover:text-accent"
+              aria-label={`Add "${event.title}" to Google Calendar`}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-3.5 py-1.5 text-sm transition hover:border-accent hover:text-accent"
             >
-              Google Calendar
+              <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5">
+                <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+              Google
             </a>
           </li>
         ))}
@@ -43,13 +46,13 @@ export default function CalendarCard({ events }: { events: CalendarEvent[] }) {
       <button
         type="button"
         onClick={() => downloadCalendar(events)}
-        className="mt-4 w-full rounded-xl bg-accent px-5 py-3 font-semibold text-accent-foreground transition hover:opacity-90 focus:ring-2 focus:ring-accent/40 focus:ring-offset-2 focus:outline-none sm:w-auto"
+        className="mt-6 w-full rounded-full bg-foreground px-5 py-3 font-medium text-background transition hover:opacity-85 sm:w-auto"
       >
-        Download all for iPhone / Outlook (.ics)
+        Download all · iPhone &amp; Outlook
       </button>
-      <p className="mt-2 text-xs text-muted">
-        Includes reminders: 9:00 on each day, plus earlier alerts before the due date, the last day
-        and the end of your stay.
+      <p className="mt-3 text-xs text-muted">
+        The file includes reminders: 9:00 on each day, plus earlier alerts before the due date, the
+        last day and the end of your stay.
       </p>
     </Card>
   );

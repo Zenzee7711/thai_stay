@@ -1,16 +1,16 @@
 import Card from "@/components/Card";
-import { stayLevel, type StayLevel } from "@/lib/deadlines";
 import GuideDetails from "@/components/GuideDetails";
+import { stayLevel, type StayLevel } from "@/lib/deadlines";
 import { displayDate } from "@/lib/format";
 import { extensionGuide, reentryGuide } from "@/lib/guides";
 
 const levelStyles: Record<StayLevel, { number: string; advice: string }> = {
   ok: {
-    number: "text-accent",
+    number: "text-foreground",
     advice: "Plenty of time left.",
   },
   soon: {
-    number: "text-amber-600 dark:text-amber-400",
+    number: "text-amber-600 dark:text-amber-300",
     advice: "Under a month left. Plan your extension or your departure now.",
   },
   urgent: {
@@ -34,28 +34,33 @@ export default function StayCard({ permittedUntil, daysLeft, hasReentryPermit }:
 
   return (
     <Card title="Permission to stay">
-      <p className="mt-3 flex items-baseline gap-2">
-        <span className={`text-5xl font-bold tabular-nums ${style.number}`}>
+      <p className="mt-4 flex items-baseline gap-3">
+        <span className={`font-serif text-7xl leading-none tabular-nums sm:text-8xl ${style.number}`}>
           {Math.abs(daysLeft)}
         </span>
-        <span className="text-lg font-medium">
+        <span className="text-lg">
           {daysLeft >= 0 ? (daysLeft === 1 ? "day left" : "days left") : "days overstayed"}
         </span>
       </p>
-      <p className="mt-1 text-sm text-muted">
-        {daysLeft === 0 ? "Today is your last permitted day" : `Permitted until ${displayDate(permittedUntil)}`}
+      <p className="mt-3 text-muted">
+        {daysLeft === 0 ? "Today is your last permitted day." : `Permitted until ${displayDate(permittedUntil)}.`}{" "}
+        {style.advice}
       </p>
-      <p className="mt-3">{style.advice}</p>
 
       {!hasReentryPermit && daysLeft >= 0 && (
-        <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-          <span className="font-semibold">Travelling soon?</span> Leaving Thailand without a
-          re-entry permit ends your current permission to stay. Get one before you go.
+        <p className="mt-5 flex gap-3 rounded-2xl bg-amber-400/10 p-4 text-sm">
+          <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+          <span>
+            <span className="font-medium">Travelling soon?</span> Leaving Thailand without a re-entry
+            permit ends your current permission to stay. Get one before you go.
+          </span>
         </p>
       )}
 
-      <GuideDetails guide={extensionGuide} />
-      <GuideDetails guide={reentryGuide} />
+      <div className="mt-6">
+        <GuideDetails guide={extensionGuide} />
+        <GuideDetails guide={reentryGuide} />
+      </div>
     </Card>
   );
 }
