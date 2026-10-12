@@ -1,25 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
+import CalendarCard from "@/components/CalendarCard";
 import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import ReportCard from "@/components/ReportCard";
 import StayCard from "@/components/StayCard";
 import { daysBetween, nextReportDue, reportStatus, reportWindow } from "@/lib/deadlines";
 import { useStoredProfile } from "@/hooks/useStoredProfile";
-import { buildCalendar, type CalendarEvent } from "@/lib/ics";
+import { deadlineEvents } from "@/lib/calendar";
 import type { Profile } from "@/lib/profile";
-
-// Turns the events into a file and makes the browser download it.
-function downloadCalendar(events: CalendarEvent[]) {
-  const file = new Blob([buildCalendar(events, new Date())], { type: "text/calendar" });
-  const url = URL.createObjectURL(file);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "thai-stay-deadlines.ics";
-  link.click();
-  URL.revokeObjectURL(url);
-}
 
 // Holds every input's state, works out the deadlines, and hands them to the cards.
 export default function StayForm() {
@@ -41,17 +31,7 @@ export default function StayForm() {
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
 
-  const calendarEvents: CalendarEvent[] = [];
-  if (reportDates) {
-    calendarEvents.push(
-      { date: reportDates.opens, title: "90-day report window opens" },
-      { date: reportDates.due, title: "90-day report due" },
-      { date: reportDates.lastDay, title: "Last day to file 90-day report before a fine" },
-    );
-  }
-  if (permittedUntil) {
-    calendarEvents.push({ date: permittedUntil, title: "Permission to stay in Thailand ends" });
-  }
+  const calendarEvents = deadlineEvents(reportDates, permittedUntil);
 
   return (
     <div className="mt-8 space-y-6">
@@ -119,15 +99,7 @@ export default function StayForm() {
         />
       )}
 
-      {calendarEvents.length > 0 && (
-        <button
-          type="button"
-          onClick={() => downloadCalendar(calendarEvents)}
-          className="w-full rounded-xl bg-accent px-5 py-3 font-semibold text-accent-foreground transition hover:opacity-90 focus:ring-2 focus:ring-accent/40 focus:ring-offset-2 focus:outline-none sm:w-auto"
-        >
-          Add {calendarEvents.length} dates to my calendar
-        </button>
-      )}
+      {calendarEvents.length > 0 && <CalendarCard events={calendarEvents} />}
     </div>
   );
 }

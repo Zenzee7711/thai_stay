@@ -1,6 +1,5 @@
 import { addDays, format, parseISO } from "date-fns";
-
-export type CalendarEvent = { date: string; title: string };
+import type { CalendarEvent } from "@/lib/calendar";
 
 // Calendar text treats \ ; , and newlines as special, so they need a backslash.
 function escapeText(text: string): string {
@@ -12,7 +11,23 @@ function compactDate(date: string): string {
   return date.replaceAll("-", "");
 }
 
-// Builds an .ics file: plain text that Google, Apple and Outlook calendars can import.
+// When to alert, counted from the start of the all-day event (midnight).
+// "PT9H" = 9:00 on the day. N days before at 9:00 = minus (N-1) days and 15 hours.
+function reminderTrigger(daysBefore: number): string {
+  return daysBefore === 0 ? "PT9H" : `-P${daysBefore - 1}DT15H`;
+}
+
+function alarm(title: string, daysBefore: number): string[] {
+  return [
+    "BEGIN:VALARM",
+    "ACTION:DISPLAY",
+    `DESCRIPTION:${escapeText(title)}`,
+    `TRIGGER:${reminderTrigger(daysBefore)}`,
+    "END:VALARM",
+  ];
+}
+
+// Builds an .ics file: plain text that Apple Calendar, Outlook and Google can import.
 // "now" is passed in (like "today" in deadlines.ts) so tests get the same output every time.
 export function buildCalendar(events: CalendarEvent[], now: Date): string {
   const stamp = now.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -29,6 +44,9 @@ export function buildCalendar(events: CalendarEvent[], now: Date): string {
       `DTSTART;VALUE=DATE:${compactDate(event.date)}`,
       `DTEND;VALUE=DATE:${compactDate(nextDay)}`,
       `SUMMARY:${escapeText(event.title)}`,
+      `DESCRIPTION:${escapeText(event.details)}`,
+      ...alarm(event.title, 0),
+      ...event.remindDaysBefore.flatMap((days) => alarm(event.title, days)),
       "END:VEVENT",
     );
   });
