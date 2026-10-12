@@ -9,6 +9,7 @@ import {
   reportWindow,
   type ReportStatus,
 } from "@/lib/deadlines";
+import { buildCalendar, type CalendarEvent } from "@/lib/ics";
 
 const statusMessages: Record<ReportStatus, string> = {
   "not-open-yet": "Not yet: your reporting window hasn't opened.",
@@ -16,6 +17,17 @@ const statusMessages: Record<ReportStatus, string> = {
   grace: "Past the due date: report before the last day to avoid a fine.",
   late: "Late: you may have to pay a fine at the immigration office.",
 };
+
+// Turns the events into a file and makes the browser download it.
+function downloadCalendar(events: CalendarEvent[]) {
+  const file = new Blob([buildCalendar(events, new Date())], { type: "text/calendar" });
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "thai-stay-deadlines.ics";
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function StayForm() {
   const [arrivalDate, setArrivalDate] = useState("");
@@ -30,6 +42,18 @@ export default function StayForm() {
   const reportDates = due ? reportWindow(due.date) : null;
   const status = reportDates ? reportStatus(today, reportDates) : null;
   const daysLeft = permittedUntil ? daysBetween(today, permittedUntil) : null;
+
+  const calendarEvents: CalendarEvent[] = [];
+  if (reportDates) {
+    calendarEvents.push(
+      { date: reportDates.opens, title: "90-day report window opens" },
+      { date: reportDates.due, title: "90-day report due" },
+      { date: reportDates.lastDay, title: "Last day to file 90-day report before a fine" },
+    );
+  }
+  if (permittedUntil) {
+    calendarEvents.push({ date: permittedUntil, title: "Permission to stay in Thailand ends" });
+  }
 
   return (
     <section className="mt-8">
@@ -106,6 +130,16 @@ export default function StayForm() {
           If you leave Thailand without a re-entry permit, your current permission to stay ends.
           Get one before you travel.
         </p>
+      )}
+
+      {calendarEvents.length > 0 && (
+        <button
+          type="button"
+          onClick={() => downloadCalendar(calendarEvents)}
+          className="mt-8 block rounded border px-4 py-2 font-medium"
+        >
+          Add these dates to my calendar (.ics)
+        </button>
       )}
     </section>
   );
