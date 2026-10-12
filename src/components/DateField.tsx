@@ -16,7 +16,7 @@ export default function DateField({ id, label, hint, value, onChange }: DateFiel
 
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-medium tracking-[0.12em] text-muted uppercase">
+      <label htmlFor={id} className="block text-xs font-medium tracking-[0.12em] text-muted uppercase sm:min-h-9">
         {label}
       </label>
 

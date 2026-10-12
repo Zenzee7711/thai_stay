@@ -2,7 +2,7 @@ import { useState } from "react";
 import Card from "@/components/Card";
 import DateField from "@/components/DateField";
 import GuideDetails from "@/components/GuideDetails";
-import { daysBetween, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
+import { daysBetween, filingMethod, suggestNextDue, type ReportStatus } from "@/lib/deadlines";
 import { relativeDays, shortDate } from "@/lib/format";
 import { reportGuide } from "@/lib/guides";
 
@@ -53,6 +53,7 @@ export default function ReportCard({
   onFiled,
 }: ReportCardProps) {
   const style = statusStyles[status];
+  const howToFile = filingMethod(source, status);
   const suggestion = suggestNextDue(dates.due);
   const rows = [
     { label: "Can file from", date: dates.opens },
@@ -86,6 +87,27 @@ export default function ReportCard({
         </span>
       </div>
       <p className="mt-2 text-muted">{style.advice(dates)}</p>
+
+      <div className="mt-5 rounded-2xl bg-background p-4 text-sm">
+        <p className="font-medium">
+          {howToFile.method === "in-person" ? "File in person" : "File online or in person"}
+        </p>
+        <p className="mt-1 text-muted">
+          {howToFile.reason}{" "}
+          {howToFile.method === "in-person" ? (
+            "Find your immigration office below."
+          ) : (
+            <a
+              href="https://tm47.immigration.go.th/tm47/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline underline-offset-2"
+            >
+              File online (official site)
+            </a>
+          )}
+        </p>
+      </div>
 
       <dl className="mt-6 divide-y divide-line border-y border-line">
         {rows.map((row) => {

@@ -5,7 +5,9 @@ import { format } from "date-fns";
 import CalendarCard from "@/components/CalendarCard";
 import DateField from "@/components/DateField";
 import HomeScreenHint from "@/components/HomeScreenHint";
+import InAppBrowserHint from "@/components/InAppBrowserHint";
 import JourneyTrack from "@/components/JourneyTrack";
+import OfficeFinder from "@/components/OfficeFinder";
 import ReportCard from "@/components/ReportCard";
 import StayCard from "@/components/StayCard";
 import Switch from "@/components/Switch";
@@ -64,6 +66,8 @@ export default function StayForm() {
 
   return (
     <div className="mt-12 sm:mt-16">
+      <InAppBrowserHint />
+
       {/* The headline: where you stand, in one or two sentences. */}
       <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-balance sm:text-5xl">
         {sentences.length > 0 ? (
@@ -93,22 +97,22 @@ export default function StayForm() {
         <div className="grid gap-5 sm:grid-cols-3">
           <DateField
             id="arrival"
-            label="Last arrival"
+            label="Last arrival in Thailand"
             hint="The date on your latest entry stamp."
             value={arrivalDate}
             onChange={(value) => update({ arrivalDate: value })}
           />
           <DateField
             id="permitted"
-            label="Allowed to stay until"
-            hint="The end date on that same stamp."
+            label="Visa expires (allowed to stay until)"
+            hint="The &quot;admitted until&quot; date on your latest entry or extension stamp. If your visa sticker shows another date, the stamp date is the one that counts."
             value={permittedUntil}
             onChange={(value) => update({ permittedUntil: value })}
           />
           <DateField
             id="slip"
-            label="Next report due"
-            hint="From your last TM.47 receipt. Leave blank before your first report, or if you've been abroad since. A trip abroad restarts the 90-day count."
+            label="Next report due (from your last 90-day report receipt)"
+            hint="Leave blank before your first report, or if you've been abroad since. A trip abroad restarts the 90-day count."
             value={slipDueDate}
             onChange={(value) => update({ slipDueDate: value })}
           />
@@ -188,6 +192,8 @@ export default function StayForm() {
             hasReentryPermit={hasReentryPermit}
           />
         )}
+
+        {hasAnyDate && <OfficeFinder />}
 
         {calendarEvents.length > 0 && <CalendarCard events={calendarEvents} />}
       </div>

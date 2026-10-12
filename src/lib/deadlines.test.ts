@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   daysBetween,
+  filingMethod,
   firstReportDue,
   nextReportDue,
   reportStatus,
@@ -120,5 +121,20 @@ describe("stayLevel", () => {
 describe("suggestNextDue", () => {
   it("suggests 90 days after the date just reported for", () => {
     expect(suggestNextDue("2027-01-10")).toBe("2027-04-10");
+  });
+});
+
+describe("filingMethod", () => {
+  it("requires the first report after arriving to be in person", () => {
+    expect(filingMethod("estimate", "open").method).toBe("in-person");
+  });
+
+  it("allows online filing once you have a receipt from this stay", () => {
+    expect(filingMethod("slip", "open").method).toBe("online-or-in-person");
+    expect(filingMethod("slip", "not-open-yet").method).toBe("online-or-in-person");
+  });
+
+  it.each(["grace", "late"] as const)("sends you in person when the report is %s", (status) => {
+    expect(filingMethod("slip", status).method).toBe("in-person");
   });
 });

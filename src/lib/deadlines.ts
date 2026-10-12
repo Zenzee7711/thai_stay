@@ -65,6 +65,30 @@ export function reportStatus(
   return "late";
 }
 
+// Whether the next report can be filed online. Online filing only works once you have
+// reported (in person) since your last arrival, and only up to the due date: the grace
+// period after it is for in-person reports. A receipt from this stay means you have reported.
+export type FilingMethod = { method: "in-person" | "online-or-in-person"; reason: string };
+
+export function filingMethod(source: "slip" | "estimate", status: ReportStatus): FilingMethod {
+  if (source === "estimate") {
+    return {
+      method: "in-person",
+      reason: "This is your first report since you arrived, so it must be done in person.",
+    };
+  }
+  if (status === "grace" || status === "late") {
+    return {
+      method: "in-person",
+      reason: "Online filing closes on the due date. After that, report in person.",
+    };
+  }
+  return {
+    method: "online-or-in-person",
+    reason: "You have already reported since arriving, so you can file online or in person.",
+  };
+}
+
 // How worried to be about the permission-to-stay date, which sets the card's colour.
 export type StayLevel = "ok" | "soon" | "urgent" | "over";
 

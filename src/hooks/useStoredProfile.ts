@@ -8,6 +8,18 @@ const listeners = new Set<() => void>();
 // (some private-browsing modes do). It just won't be remembered next time.
 let current: string | null = null;
 let loaded = false;
+let askedToPersist = false;
+
+// Browsers may delete site data when the device runs low on space. Asking for persistent
+// storage once, after the first save, asks them to keep it. Chrome decides silently;
+// Firefox may ask the user once.
+function askToKeepData() {
+  if (askedToPersist) return;
+  askedToPersist = true;
+  navigator.storage?.persist?.().catch(() => {
+    // Not supported or refused: the data is still saved, just not protected from clean-up.
+  });
+}
 
 function read(): string | null {
   if (!loaded) {
@@ -25,7 +37,10 @@ function write(value: string | null) {
   current = value;
   try {
     if (value === null) window.localStorage.removeItem(storageKey);
-    else window.localStorage.setItem(storageKey, value);
+    else {
+      window.localStorage.setItem(storageKey, value);
+      askToKeepData();
+    }
   } catch {
     // Storage blocked: keep working from memory.
   }

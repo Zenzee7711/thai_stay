@@ -34,7 +34,7 @@ export default function StayCard({ permittedUntil, daysLeft, hasReentryPermit }:
   const style = levelStyles[stayLevel(daysLeft)];
 
   return (
-    <Card title="Permitted stay">
+    <Card title="Visa expiry (permitted stay)">
       <p className="mt-4 flex items-baseline gap-3">
         <span className={`font-serif text-7xl leading-none tabular-nums sm:text-8xl ${style.number}`}>
           {Math.abs(daysLeft)}

@@ -10,18 +10,19 @@ export const reportGuide: Guide = {
   title: "How to file the 90-day report",
   sections: [
     {
-      heading: "Ways to report",
+      heading: "In person or online?",
       items: [
-        "In person at the immigration office for the area you live in. Several guides say your first report must be done in person.",
-        "Online on the TM.47 website, usually from your second report on. Online filing generally only works inside the window, not during the 7-day grace period.",
-        "By registered mail, or through someone you authorise, such as an agent.",
+        "Your first report after every arrival in Thailand must be done in person, at the immigration office for the province where you live.",
+        "After that, if you stay in Thailand, you can file the next reports online on the TM.47 website.",
+        "Online filing only works up to the due date. The 7-day grace period after it is for in-person reports.",
+        "You can also report by registered mail, or through someone you authorise, such as an agent.",
       ],
     },
     {
       heading: "If you travel abroad",
       items: [
         "Leaving Thailand ends your current 90-day count. Your arrival day back in Thailand is day 1 again.",
-        "The due date on your old receipt no longer applies. Your next report is due 90 days after you arrive.",
+        "The due date on your old receipt no longer applies. Your next report is due 90 days after you arrive, and it must be done in person again.",
         "After a trip, tap \"I just re-entered Thailand\", or change \"Last arrival\" and clear \"Next report due\".",
       ],
     },
@@ -43,6 +44,8 @@ export const reportGuide: Guide = {
     { label: "Thai government portal: 90-day notification", href: "https://thailand.go.th/event-detail/001_01_084" },
     { label: "Online TM.47 report (official)", href: "https://tm47.immigration.go.th/tm47/" },
     { label: "Thaiger: 90-day reporting guide", href: "https://thethaiger.com/visas/services/90-day-reporting/" },
+    { label: "Thailand Starter Kit: online after an in-person report", href: "https://www.thailandstarterkit.com/visas/90-day-notification-thailand/" },
+    { label: "ExpatDen: 90-day notification", href: "https://expatden.com/thailand/90-day-notification-thailand/" },
   ],
 };
 
