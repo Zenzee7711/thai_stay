@@ -6,6 +6,10 @@ Hosted in vercel for daily use for those who wanna try **[Open Thai Stay](https:
 
 Enter your latest arrival date, the permitted-until date from your passport stamp, and the next report date from your receipt if you have one. The app puts them on a timeline, shows what's coming up, and lets you add reminders to Google Calendar, Apple Calendar, or Outlook.
 
+![Thai Stay timeline with arrival, today, and the next report date alongside its reporting window](docs/images/stay-timeline.png)
+
+*Timeline preview with example dates. Select a milestone to see its details.*
+
 You can also:
 
 - Update your dates after filing a report or returning to Thailand.
