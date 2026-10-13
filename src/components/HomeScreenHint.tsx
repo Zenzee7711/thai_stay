@@ -7,7 +7,7 @@ export default function HomeScreenHint() {
   if (!show) return null;
 
   return (
-    <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-card p-4 text-sm motion-safe:animate-rise sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-line bg-card p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
       <p>
         <span className="font-medium">On iPhone?</span>{" "}
         <span className="text-muted">

@@ -51,7 +51,7 @@ export default function OfficeFinder() {
           type="button"
           onClick={locate}
           disabled={status === "locating"}
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-50"
+          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
         >
           {status === "locating" ? "Finding you…" : "Find the nearest office"}
         </button>

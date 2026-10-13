@@ -76,7 +76,7 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
   return (
     <Card title="90-day report">
       <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-        <p className="font-serif text-4xl sm:text-5xl">
+        <p className="font-medium text-4xl sm:text-5xl">
           Due {relativeDays(daysBetween(today, dates.due))}
         </p>
         <span className={`rounded-full px-3 py-1 text-sm font-medium ${style.colors}`}>
@@ -130,14 +130,14 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
         <button
           type="button"
           onClick={startFiling}
-          className="mt-6 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:opacity-85"
+          className="mt-6 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-accent hover:text-accent-foreground"
         >
           I did my report
         </button>
       )}
 
       {filing && (
-        <div className="mt-6 rounded-2xl bg-background p-5 motion-safe:animate-rise">
+        <div className="mt-6 rounded-2xl bg-background p-5">
           <DateField
             id="next-due"
             label="Next due date on your new receipt"
@@ -150,7 +150,7 @@ export default function ReportCard({ today, status, source, dates, onFiled }: Re
               type="button"
               onClick={saveFiling}
               disabled={!nextDue}
-              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition hover:opacity-90 disabled:opacity-40"
+              className="rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition hover:ring-2 hover:ring-accent/40 disabled:opacity-40"
             >
               Save
             </button>

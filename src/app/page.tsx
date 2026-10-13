@@ -12,8 +12,8 @@ export default function Home() {
     // max-w-3xl keeps lines readable on wide screens; px-5 keeps a gap from phone edges.
     <main className="mx-auto w-full max-w-3xl px-5 py-8 sm:py-12">
       <header className="flex items-center justify-between gap-4">
-        <span className="font-serif text-2xl">Thai Stay</span>
-        <span className="text-right text-xs text-muted">90-day report &amp; visa tracker</span>
+        <span className="font-medium text-2xl">Thai Stay</span>
+        <span className="text-right text-xs text-muted">90-day reports &amp; stay dates</span>
       </header>
 
       <StayForm />

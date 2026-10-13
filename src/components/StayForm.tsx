@@ -67,7 +67,7 @@ export default function StayForm() {
       <InAppBrowserHint />
 
       {/* The headline: where you stand, in one or two sentences. */}
-      <h1 className="font-serif text-4xl leading-[1.1] tracking-tight text-balance sm:text-5xl">
+      <h1 className="font-medium text-3xl leading-snug tracking-tight text-balance sm:text-4xl">
         {sentences.length > 0 ? (
           sentences.map((sentence, index) => (
             <span key={sentence} className={index > 0 ? "text-muted" : ""}>
@@ -76,7 +76,7 @@ export default function StayForm() {
           ))
         ) : (
           <>
-            Know when your 90-day report and visa are due.{" "}
+            Keep your report and stay dates in one place.{" "}
             <span className="text-muted">Add your dates below.</span>
           </>
         )}
@@ -172,7 +172,7 @@ export default function StayForm() {
         </div>
 
         {notice && (
-          <p role="status" className="mt-5 rounded-2xl bg-accent/10 px-4 py-3 text-sm motion-safe:animate-rise">
+          <p role="status" className="mt-5 rounded-2xl bg-accent/10 px-4 py-3 text-sm">
             {notice}
           </p>
         )}

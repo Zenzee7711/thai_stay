@@ -8,7 +8,7 @@
   --background: #f6f5f1;
   --foreground: #1a1a19;
   --card: #fffefb;
-  --muted: #6f6b63;
+  --muted: #5d5952;
   --line: #e6e3dc;
   --accent: #0e7c66;
   --accent-foreground: #ffffff;
@@ -21,7 +21,7 @@
     --background: #111110;
     --foreground: #ecebe7;
     --card: #191918;
-    --muted: #9b978f;
+    --muted: #b5b1a8;
     --line: #2b2a27;
     --accent: #4fd1b0;
     --accent-foreground: #062a22;
@@ -39,24 +39,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-instrument-serif);
-}
 
-/* A gentle "rise into place" for cards. Used as motion-safe:animate-rise,
-   so it is switched off for people who ask their device to reduce motion. */
-@theme {
-  --animate-rise: rise 0.5s ease-out both;
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
 }
 
 /* Tailwind 4 no longer shows the pointing hand on buttons. Bring it back so they look clickable. */
@@ -79,3 +62,7 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Keep keyboard focus clear without persistent decorative effects. */
+:where(button,a,input,select,summary):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}

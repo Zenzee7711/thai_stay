@@ -43,7 +43,7 @@ export default function CalendarCard({ events }: { events: CalendarEvent[] }) {
       <button
         type="button"
         onClick={() => downloadCalendar(events)}
-        className="mt-6 w-full rounded-full bg-foreground px-5 py-3 font-medium text-background transition hover:opacity-85 sm:w-auto"
+        className="mt-6 w-full rounded-full bg-foreground px-5 py-3 font-medium text-background transition hover:bg-accent hover:text-accent-foreground sm:w-auto"
       >
         Download all for iPhone or Outlook
       </button>

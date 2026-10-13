@@ -85,7 +85,7 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
   }
 
   return (
-    <section aria-label="Timeline of your stay" className="motion-safe:animate-rise">
+    <section aria-label="Timeline of your stay">
       {summary.length > 0 && (
         <p className="mb-6 text-sm text-muted tabular-nums">{summary.join(" · ")}</p>
       )}
@@ -123,7 +123,6 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
           className="absolute top-[34px] h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2"
           style={{ left: `${at(today)}%` }}
         >
-          <span className="absolute inset-0 rounded-full bg-accent opacity-40 motion-safe:animate-ping" />
           <span className="absolute inset-0 rounded-full bg-accent ring-4 ring-background" />
         </span>
         <span
@@ -183,7 +182,7 @@ export default function JourneyTrack({ today, milestones, report }: JourneyTrack
       {chosen && (
         <div className="mt-4 flex items-start justify-between gap-4 border-t border-line pt-5">
           <div aria-live="polite">
-            <p className="font-serif text-3xl">
+            <p className="font-medium text-3xl">
               {chosen.label}
               {chosen.estimated ? <span className="text-muted"> (estimate)</span> : null}
             </p>
